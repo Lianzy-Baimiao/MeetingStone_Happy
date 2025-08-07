@@ -430,8 +430,10 @@ function ListOfDungeons(menuType)
     --local Activitys = { 1282, 1281, 1283, 1286, 510, 683, 717, 1550}
     
     local Dungeons =  C_LFGList.GetAvailableActivityGroups(GROUP_FINDER_CATEGORY_ID_DUNGEONS, bit.bor(Enum.LFGListFilter.CurrentSeason, Enum.LFGListFilter.PvE));
-    local Activitys = { 1282, 1281, 1283, 1286, 1550,717, 510, 683} 
-  
+    --{ 323, 324, 326, 371, 381, 261}
+    local Activitys = {1284,1281,1285,1550,1694,669}
+    --381/1694/生态 324/1281/修道院 326/1285/破晨号 371/1550/水闸 280/1016/天街 281/1017/宏图  253/669/赎罪 323/1284/回响
+    
     -- C_MythicPlus.IsMythicPlusActive()
     -- C_LFGList.GetActivityInfoTable(i)
     -- /run for i=750,2000 do local info = C_LFGList.GetActivityInfoTable(i); if info then print(i, info.fullName) end end

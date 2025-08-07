@@ -22,7 +22,7 @@ local _dungeon = C_LFGList.GetAvailableActivityGroups(GROUP_FINDER_CATEGORY_ID_D
 if #_dungeon > 0 then
     MEETINGSTONE_UI_DB.Dungeon_LIST = _dungeon
 elseif  not MEETINGSTONE_UI_DB.Dungeon_LIST then   
-    MEETINGSTONE_UI_DB.Dungeon_LIST = { 322, 324, 325, 327, 140, 257, 266, 371}
+    MEETINGSTONE_UI_DB.Dungeon_LIST = { 323, 324, 326, 371, 381, 261}
 end    
 
 -- if not MEETINGSTONE_UI_DB.CLEAR_IGNORE_LIST_V1 then
@@ -322,7 +322,7 @@ function BrowsePanel:CreateBlzFilterPanel()
         -- enabled.difficultyMythic = false
         -- enabled.difficultyMythicPlus = true
         if enabled.minimumRating == 0 then
-           enabled.minimumRating = 1
+           enabled.minimumRating = 0
         end    
         for i,v in ipairs(enabled.activities) do
             local stats,index = containsValue(Dungeons,v)

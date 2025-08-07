@@ -1,6 +1,6 @@
-## Interface: 110100
-## Version: 11.1.0
-## VersionDate: 20250329v2
+## Interface: 110200
+## Version: 11.2.0
+## VersionDate: 20250807
 ## Title: Meeting Stone
 ## Title-zhCN: |cffff565e[开心快乐每一天]|r 集合石修改版
 ## Title-zhTW: |cffff565e[開心快樂每一天]|r 集合石修改版
