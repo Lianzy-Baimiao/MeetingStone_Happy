@@ -321,9 +321,9 @@ function BrowsePanel:CreateBlzFilterPanel()
         -- enabled.difficultyHeroic = false
         -- enabled.difficultyMythic = false
         -- enabled.difficultyMythicPlus = true
-        if enabled.minimumRating == 0 then
-           enabled.minimumRating = 0
-        end    
+        -- if enabled.minimumRating == 0 then
+        --    enabled.minimumRating = 1
+        -- end    
         for i,v in ipairs(enabled.activities) do
             local stats,index = containsValue(Dungeons,v)
             if not stats then
@@ -358,6 +358,7 @@ function BrowsePanel:CreateBlzFilterPanel()
     function createFilterBox(index,text,min,cbEvent,cbFunc,DB_Name)
         local Box = Addon:GetClass('FilterBox'):New(BlzFilterPanel.Inset)
         Box.Check:SetText(text)
+        Box.MinBox:SetText(min)
         Box.MinBox:SetMinMaxValues(min, 9999)
         Box.MaxBox:SetText(9999)
         Box.MaxBox:SetMinMaxValues(9999, 9999)
@@ -416,7 +417,6 @@ function BrowsePanel:CreateBlzFilterPanel()
     createCheckBox(#self.MD + 1, string.format(LFG_LIST_CLASS_AVAILABLE, PlayerUtil.GetClassName()),enabled.needsMyClass,"needsMyClass",'OnChanged', roleFunc)
     createCheckBox(#self.MD + 1, LFG_LIST_HAS_TANK,enabled.hasTank,"hasTank",'OnChanged', roleFunc)
     createCheckBox(#self.MD + 1, LFG_LIST_HAS_HEALER,enabled.hasHealer,"hasHealer",'OnChanged', roleFunc)
-
 
     createFilterBox(#self.MD + 1, LFG_LIST_MINIMUM_RATING,enabled.minimumRating,'OnChanged',function(box) 
         enabled.minimumRating = box.MinBox:GetNumber()

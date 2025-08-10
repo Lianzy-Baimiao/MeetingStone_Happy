@@ -429,10 +429,15 @@ function ListOfDungeons(menuType)
     --local Dungeons = { 322, 324, 325, 327, 371,266,140,257} 
     --local Activitys = { 1282, 1281, 1283, 1286, 510, 683, 717, 1550}
     
-    local Dungeons =  C_LFGList.GetAvailableActivityGroups(GROUP_FINDER_CATEGORY_ID_DUNGEONS, bit.bor(Enum.LFGListFilter.CurrentSeason, Enum.LFGListFilter.PvE));
-    --{ 323, 324, 326, 371, 381, 261}
-    local Activitys = {1284,1281,1285,1550,1694,669}
-    --381/1694/生态 324/1281/修道院 326/1285/破晨号 371/1550/水闸 280/1016/天街 281/1017/宏图  253/669/赎罪 323/1284/回响
+    local Dungeons =  C_LFGList.GetAvailableActivityGroups(GROUP_FINDER_CATEGORY_ID_DUNGEONS, bit.bor(Enum.LFGListFilter.CurrentSeason, Enum.LFGListFilter.PvE))
+    if #Dungeons then
+        Dungeons = { 323, 324, 326, 371, 381, 261}
+    end    
+    local Activitys = C_LFGList.GetAvailableActivities(GROUP_FINDER_CATEGORY_ID_DUNGEONS, bit.bor(Enum.LFGListFilter.CurrentSeason, Enum.LFGListFilter.PvE))
+    if #Activitys == 0 then
+        Activitys = {1284,1281,1285,1550,1694,669}
+    end    
+    --381/1694/生态 324/1281/修道院 326/1285/破晨号 371/1550/水闸 280/1016/天街 281/1017/宏图  261/669/赎罪 323/1284/回响
     
     -- C_MythicPlus.IsMythicPlusActive()
     -- C_LFGList.GetActivityInfoTable(i)
