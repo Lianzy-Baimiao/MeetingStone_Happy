@@ -22,7 +22,7 @@ local _dungeon = C_LFGList.GetAvailableActivityGroups(GROUP_FINDER_CATEGORY_ID_D
 if #_dungeon > 0 then
     MEETINGSTONE_UI_DB.Dungeon_LIST = _dungeon
 elseif  not MEETINGSTONE_UI_DB.Dungeon_LIST then   
-    MEETINGSTONE_UI_DB.Dungeon_LIST = { 323, 324, 326, 371, 381, 261}
+    MEETINGSTONE_UI_DB.Dungeon_LIST = { 323, 324, 326, 371, 381, 261 ,280,281}
 end    
 
 -- if not MEETINGSTONE_UI_DB.CLEAR_IGNORE_LIST_V1 then
@@ -335,6 +335,14 @@ function BrowsePanel:CreateBlzFilterPanel()
     
     function createCheckBox(index,text,checked,value,cbEvent,cbFunc) 
         local Box = Addon:GetClass('CheckBox'):New(BlzFilterPanel.Inset)
+
+        text = string.gsub(text, "塔扎维什：索·莉亚的宏图", "塔扎维什：宏图")
+        text = string.gsub(text, "塔扎维什：琳彩天街", "塔扎维什：天街")
+        text = string.gsub(text, "葛拉克朗殞命之地 - 恆龍黎明", "殞命")
+        text = string.gsub(text, "姆多茲諾高地 - 恆龍黎明", "高地")
+        text = string.gsub(text, "迦拉克隆的陨落 - 永恒黎明", "陨落")
+        text = string.gsub(text, "姆诺兹多的崛起 - 永恒黎明", "崛起")
+
         Box.Check:SetText(text)
         Box.Check:SetChecked(checked)
         Box.dataValue = value
