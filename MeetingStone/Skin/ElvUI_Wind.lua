@@ -45,7 +45,7 @@ local function defaultcvar()
       self:CreateBackdrop("Transparent")
       self.backdrop:ClearAllPoints()
       self.backdrop:SetOutside(self, 1, -3)
-      S:ESProxy("HandleNextPrevButton", self.MenuButton, "down")
+      S:Proxy("HandleNextPrevButton", self.MenuButton, "down")
       self.__windSkin = true
   end
   
@@ -56,7 +56,7 @@ local function defaultcvar()
       
       for _, button in pairs(self.sortButtons) do
           button:StripTextures()
-          S:ESProxy("HandleButton", button, nil, nil, nil, true, "Transparent")
+          S:Proxy("HandleButton", button, nil, nil, nil, true, "Transparent")
           button.backdrop:ClearAllPoints()
           button.backdrop:SetOutside(button, -2, 0)
       end
@@ -64,9 +64,9 @@ local function defaultcvar()
       local scrollBar = self:GetScrollBar()
       
       if scrollBar then
-          S:ESProxy("HandleNextPrevButton", scrollBar.ScrollUpButton, "up")
-          S:ESProxy("HandleNextPrevButton", scrollBar.ScrollDownButton, "down")
-          S:ESProxy("HandleScrollBar", scrollBar)
+          S:Proxy("HandleNextPrevButton", scrollBar.ScrollUpButton, "up")
+          S:Proxy("HandleNextPrevButton", scrollBar.ScrollDownButton, "down")
+          S:Proxy("HandleScrollBar", scrollBar)
       end
       
       self.__windSkin = true
@@ -98,7 +98,7 @@ local function defaultcvar()
       -- Main Panel
       local MainPanel = NEG.MainPanel or MTSAddon and MTSAddon:GetModule("MainPanel")
       if MainPanel then
-          S:ESProxy("HandlePortraitFrame", MainPanel)
+          S:Proxy("HandlePortraitFrame", MainPanel)
           self:CreateShadow(MainPanel)
           self:MerathilisUISkin(MainPanel)
           MainPanel.PortraitFrame:Hide()
@@ -106,7 +106,7 @@ local function defaultcvar()
           CreateFrame("Button", "WTMeetingStoneCloseButton", MainPanel, "UIPanelCloseButton, BackdropTemplate")
           close:Point("TOPRIGHT", MainPanel.backdrop, "TOPRIGHT", 2, 4)
           close:SetScript("OnClick", MainPanel.CloseButton:GetScript("OnClick"))
-          S:ESProxy("HandleCloseButton", close)
+          S:Proxy("HandleCloseButton", close)
           MainPanel.CloseButton:Kill()
           MainPanel.CloseButton = close
       end
@@ -164,7 +164,7 @@ local function defaultcvar()
           "PageScrollBar",
           "Constructor",
           function(self)
-              S:ESProxy("HandleScrollBar", self)
+              S:Proxy("HandleScrollBar", self)
           end
       )
       
@@ -180,7 +180,7 @@ local function defaultcvar()
                       if button.Icon then -- prevent cause error in ElvUI Skin functions
                           button.Icon.GetTexture = button.Icon.GetTexture or E.noop
                       end
-                      S:ESProxy("HandleButton", button, nil, nil, nil, true, "Transparent")
+                      S:Proxy("HandleButton", button, nil, nil, nil, true, "Transparent")
                       
                       local selectedTex = button.backdrop:CreateTexture(nil)
                       local classColor = E:ClassColor(E.myclass)
@@ -215,27 +215,27 @@ local function defaultcvar()
           -- Check Buttons: Auto join (自动进组) / Double Click Join (双击加入)
           for _, child in pairs({BrowsePanel:GetChildren()}) do
               if child.GetObjectType and child:GetObjectType() == "CheckButton" then
-                  S:ESProxy("HandleCheckBox", child)
+                  S:Proxy("HandleCheckBox", child)
               end
           end
           
           -- Refresh (重置)
           if BrowsePanel.RefreshButton then
-              S:ESProxy("HandleButton", BrowsePanel.RefreshButton, nil, nil, nil, true, "Transparent")
+              S:Proxy("HandleButton", BrowsePanel.RefreshButton, nil, nil, nil, true, "Transparent")
               BrowsePanel.RefreshButton.backdrop:ClearAllPoints()
               BrowsePanel.RefreshButton.backdrop:SetOutside(BrowsePanel.RefreshButton, -1, -1)
           end
           
           -- Meeting Stone EX element (大秘境)
           if BrowsePanel.ExSearchButton then
-              S:ESProxy("HandleButton", BrowsePanel.ExSearchButton, nil, nil, nil, true, "Transparent")
+              S:Proxy("HandleButton", BrowsePanel.ExSearchButton, nil, nil, nil, true, "Transparent")
               BrowsePanel.ExSearchButton.backdrop:ClearAllPoints()
               BrowsePanel.ExSearchButton.backdrop:SetOutside(BrowsePanel.ExSearchButton, -1, -1)
           end
           
           -- Advanced Filter (高级过滤)
           if BrowsePanel.AdvButton then
-              S:ESProxy("HandleButton", BrowsePanel.AdvButton, nil, nil, nil, true, "Transparent")
+              S:Proxy("HandleButton", BrowsePanel.AdvButton, nil, nil, nil, true, "Transparent")
               BrowsePanel.AdvButton.backdrop:ClearAllPoints()
               BrowsePanel.AdvButton.backdrop:SetOutside(BrowsePanel.AdvButton, -1, -1)
               if BrowsePanel.AdvButton.Shine then
@@ -252,14 +252,14 @@ local function defaultcvar()
               local scrollBar = BrowsePanel.AutoCompleteFrame:GetScrollBar()
               
               if scrollBar then
-                  S:ESProxy("HandleNextPrevButton", scrollBar.ScrollUpButton, "up")
-                  S:ESProxy("HandleNextPrevButton", scrollBar.ScrollDownButton, "down")
-                  S:ESProxy("HandleScrollBar", scrollBar)
+                  S:Proxy("HandleNextPrevButton", scrollBar.ScrollUpButton, "up")
+                  S:Proxy("HandleNextPrevButton", scrollBar.ScrollDownButton, "down")
+                  S:Proxy("HandleScrollBar", scrollBar)
               end
           end
           
           if BrowsePanel.SignUpButton then
-              S:ESProxy("HandleButton", BrowsePanel.SignUpButton, nil, nil, nil, true, "Transparent")
+              S:Proxy("HandleButton", BrowsePanel.SignUpButton, nil, nil, nil, true, "Transparent")
           end
           
           if BrowsePanel.ActivityDropdown then
@@ -271,33 +271,33 @@ local function defaultcvar()
           end
           
           if BrowsePanel.NoResultBlocker then
-              S:ESProxy("HandleButton", BrowsePanel.NoResultBlocker.Button, nil, nil, nil, true, "Transparent")
+              S:Proxy("HandleButton", BrowsePanel.NoResultBlocker.Button, nil, nil, nil, true, "Transparent")
               F.SetFontOutline(BrowsePanel.NoResultBlocker.Label)
           end
           
           if BrowsePanel.AdvFilterPanel then
               local panel = BrowsePanel.AdvFilterPanel
-              S:ESProxy("HandlePortraitFrame", panel)
+              S:Proxy("HandlePortraitFrame", panel)
               S:CreateShadow(panel)
               for _, child in pairs {panel:GetChildren()} do
                   if child.GetObjectType and child:GetObjectType() == "Button" then
                       if child.GetText and child:GetText() ~= "" and child:GetText() ~= nil then
-                          S:ESProxy("HandleButton", child, nil, nil, nil, true, "Transparent")
+                          S:Proxy("HandleButton", child, nil, nil, nil, true, "Transparent")
                           child.backdrop:ClearAllPoints()
                           child.backdrop:SetOutside(child, -1, 0)
                       else
-                          S:ESProxy("HandleCloseButton", child)
+                          S:Proxy("HandleCloseButton", child)
                       end
                   end
               end
               
               for _, child in pairs {panel.Inset:GetChildren()} do
                   if child.Check and child.MaxBox and child.MinBox then
-                      S:ESProxy("HandleCheckBox", child.Check)
+                      S:Proxy("HandleCheckBox", child.Check)
                       child.MaxBox:StripTextures()
-                      S:ESProxy("HandleEditBox", child.MaxBox)
+                      S:Proxy("HandleEditBox", child.MaxBox)
                       child.MinBox:StripTextures()
-                      S:ESProxy("HandleEditBox", child.MinBox)
+                      S:Proxy("HandleEditBox", child.MinBox)
                   end
               end
           end
@@ -305,59 +305,59 @@ local function defaultcvar()
           -- Meeting Stone EX element (大秘境过滤)
           if BrowsePanel.BlzFilterPanel then
               local panel = BrowsePanel.BlzFilterPanel
-              S:ESProxy("HandlePortraitFrame", panel)
+              S:Proxy("HandlePortraitFrame", panel)
               S:CreateShadow(panel)
               for _, child in pairs {panel:GetChildren()} do
                   if child.GetObjectType and child:GetObjectType() == "Button" then
                       if child.GetText and child:GetText() ~= "" and child:GetText() ~= nil then
-                          S:ESProxy("HandleButton", child, nil, nil, nil, true, "Transparent")
+                          S:Proxy("HandleButton", child, nil, nil, nil, true, "Transparent")
                           child.backdrop:ClearAllPoints()
                           child.backdrop:SetOutside(child, -1, 0)
                       else
-                          S:ESProxy("HandleCloseButton", child)
+                          S:Proxy("HandleCloseButton", child)
                       end
                   end
               end
               
               for _, child in pairs {panel.Inset:GetChildren()} do
                   if child.Check then
-                      S:ESProxy("HandleCheckBox", child.Check)
+                      S:Proxy("HandleCheckBox", child.Check)
                   end
                   if child.Check and child.MaxBox and child.MinBox then
-                    S:ESProxy("HandleCheckBox", child.Check)
+                    S:Proxy("HandleCheckBox", child.Check)
                     child.MaxBox:StripTextures()
-                    S:ESProxy("HandleEditBox", child.MaxBox)
+                    S:Proxy("HandleEditBox", child.MaxBox)
                     child.MinBox:StripTextures()
-                    S:ESProxy("HandleEditBox", child.MinBox)
+                    S:Proxy("HandleEditBox", child.MinBox)
                  end
               end
           end
           if BrowsePanel.ExFilterPanel then
             local panel = BrowsePanel.ExFilterPanel
-            S:ESProxy("HandlePortraitFrame", panel)
+            S:Proxy("HandlePortraitFrame", panel)
             S:CreateShadow(panel)
             for _, child in pairs {panel:GetChildren()} do
                 if child.GetObjectType and child:GetObjectType() == "Button" then
                     if child.GetText and child:GetText() ~= "" and child:GetText() ~= nil then
-                        S:ESProxy("HandleButton", child, nil, nil, nil, true, "Transparent")
+                        S:Proxy("HandleButton", child, nil, nil, nil, true, "Transparent")
                         child.backdrop:ClearAllPoints()
                         child.backdrop:SetOutside(child, -1, 0)
                     else
-                        S:ESProxy("HandleCloseButton", child)
+                        S:Proxy("HandleCloseButton", child)
                     end
                 end
             end
             
             for _, child in pairs {panel.Inset:GetChildren()} do
                 if child.Check then
-                    S:ESProxy("HandleCheckBox", child.Check)
+                    S:Proxy("HandleCheckBox", child.Check)
                 end
                 if child.Check and child.MaxBox and child.MinBox then
-                  S:ESProxy("HandleCheckBox", child.Check)
+                  S:Proxy("HandleCheckBox", child.Check)
                   child.MaxBox:StripTextures()
-                  S:ESProxy("HandleEditBox", child.MaxBox)
+                  S:Proxy("HandleEditBox", child.MaxBox)
                   child.MinBox:StripTextures()
-                  S:ESProxy("HandleEditBox", child.MinBox)
+                  S:Proxy("HandleEditBox", child.MinBox)
                end
             end
         end
@@ -375,7 +375,7 @@ local function defaultcvar()
           end
           
           if ManagerPanel.RefreshButton then
-              S:ESProxy("HandleButton", ManagerPanel.RefreshButton, nil, nil, nil, true, "Transparent")
+              S:Proxy("HandleButton", ManagerPanel.RefreshButton, nil, nil, nil, true, "Transparent")
               ManagerPanel.RefreshButton.backdrop:ClearAllPoints()
               ManagerPanel.RefreshButton.backdrop:SetOutside(ManagerPanel.RefreshButton, -1, -2)
           end
@@ -397,11 +397,11 @@ local function defaultcvar()
           end
           
           if ManagerPanel.LeftPart and ManagerPanel.LeftPart.CreateButton then
-              S:ESProxy("HandleButton", ManagerPanel.LeftPart.CreateButton, nil, nil, nil, true, "Transparent")
+              S:Proxy("HandleButton", ManagerPanel.LeftPart.CreateButton, nil, nil, nil, true, "Transparent")
           end
           
           if ManagerPanel.LeftPart and ManagerPanel.LeftPart.DisbandButton then
-              S:ESProxy("HandleButton", ManagerPanel.LeftPart.DisbandButton, nil, nil, nil, true, "Transparent")
+              S:Proxy("HandleButton", ManagerPanel.LeftPart.DisbandButton, nil, nil, nil, true, "Transparent")
           end
           
           if ManagerPanel.LeftPart and ManagerPanel.LeftPart.CreateWidget then
@@ -420,11 +420,11 @@ local function defaultcvar()
                                   end
                               end
                           end
-                          S:ESProxy("HandleEditBox", subChild)
+                          S:Proxy("HandleEditBox", subChild)
                           subChild.backdrop:ClearAllPoints()
                           subChild.backdrop:SetOutside(subChild, -1, -2)
                       elseif subChild:GetObjectType() == "CheckButton" then
-                          S:ESProxy("HandleCheckBox", subChild)
+                          S:Proxy("HandleCheckBox", subChild)
                       end
                   end
               end
@@ -461,11 +461,11 @@ local function defaultcvar()
                       end
                   end
               end
-              S:ESProxy("HandleEditBox", RecentPanel.SearchInput)
+              S:Proxy("HandleEditBox", RecentPanel.SearchInput)
           end
           
           if RecentPanel.BatchDeleteButton then
-              S:ESProxy("HandleButton", RecentPanel.BatchDeleteButton, nil, nil, nil, true, "Transparent")
+              S:Proxy("HandleButton", RecentPanel.BatchDeleteButton, nil, nil, nil, true, "Transparent")
           end
           
           if RecentPanel.MemberList then
@@ -494,7 +494,7 @@ local function defaultcvar()
           
           for _, child in pairs {IgnoreListPanel:GetChildren()} do
               if child.GetObjectType and child:GetObjectType() == "Button" and child.Left and child.Right then
-                  S:ESProxy("HandleButton", child)
+                  S:Proxy("HandleButton", child)
               end
           end
       end
