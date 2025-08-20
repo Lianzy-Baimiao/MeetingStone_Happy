@@ -170,7 +170,7 @@ local function defaultcvar()
                 if frame.CloseButton then B.ReskinClose(frame.CloseButton) end
     
                 MS_StripTextures(frame)
-                B.SetBD(frame)
+                frame.bg = B.SetBD(frame)
             end
         end
     
@@ -627,7 +627,7 @@ local function defaultcvar()
                 local BlzFilterPanel = BrowsePanel.BlzFilterPanel
                 if BlzFilterPanel then
                     --ExSearchPanel:SetPoint("TOPLEFT", MSEnv.MainPanel, "TOPRIGHT", 3, -30)
-    
+                    BlzFilterPanel.bg:SetBackdropBorderColor(1, 1, 1, 1)
                     for _, child in pairs {BlzFilterPanel:GetChildren()} do
                         if child:GetObjectType() == "Button" then
                             if child:GetText() then
@@ -640,9 +640,12 @@ local function defaultcvar()
                     for _, child in pairs {BlzFilterPanel.Inset:GetChildren()} do
                         if child.Check then
                            B.ReskinCheck(child.Check)
+                           child.Check.bg:SetBackdropBorderColor(1, 1, 1, 0.25)
                            if child.MaxBox and child.MinBox then
                                 reskinMSInput(child.MaxBox)
                                 reskinMSInput(child.MinBox)
+                                child.MaxBox.bg:SetBackdropBorderColor(1, 1, 1, 0.25)
+                                child.MinBox.bg:SetBackdropBorderColor(1, 1, 1, 0.25)
                                 child.styled = true
                            end
                         end
@@ -653,6 +656,7 @@ local function defaultcvar()
                 local ExFilterPanel = BrowsePanel.ExFilterPanel
                 if ExFilterPanel then
                     --ExSearchPanel:SetPoint("TOPLEFT", MSEnv.MainPanel, "TOPRIGHT", 3, -30)
+                    ExFilterPanel.bg:SetBackdropBorderColor(1, 1, 1, 1)
                     for _, child in pairs {ExFilterPanel:GetChildren()} do
                         if child:GetObjectType() == "Button" then
                             if child:GetText() then
@@ -665,9 +669,12 @@ local function defaultcvar()
                     for _, child in pairs {ExFilterPanel.Inset:GetChildren()} do
                         if child.Check then
                            B.ReskinCheck(child.Check)
+                           child.Check.bg:SetBackdropBorderColor(1, 1, 1, 0.25)
                            if child.MaxBox and child.MinBox then
                                 reskinMSInput(child.MaxBox)
                                 reskinMSInput(child.MinBox)
+                                child.MaxBox.bg:SetBackdropBorderColor(1, 1, 1, 0.25)
+                                child.MinBox.bg:SetBackdropBorderColor(1, 1, 1, 0.25)
                                 child.styled = true
                            end
                         end

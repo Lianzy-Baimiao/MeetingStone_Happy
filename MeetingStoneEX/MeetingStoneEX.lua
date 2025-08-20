@@ -284,6 +284,7 @@ function BrowsePanel:createSeasonFilter()
     function btnClick()
         local activityItem = self.ActivityDropdown:GetItem()
         if not activityItem then
+            self.ExFilterPanel:SetShown(not self.ExFilterPanel:IsShown())
             return
         end
         local categoryId = activityItem.categoryId
@@ -338,7 +339,7 @@ function BrowsePanel:CreateBlzFilterPanel()
     do
         GUI:Embed(BlzFilterPanel, 'Refresh')
         BlzFilterPanel:SetSize(200, 400)
-        BlzFilterPanel:SetPoint('TOPRIGHT', self.ExSearchButton, 'BOTTOM', 115, 0)
+        BlzFilterPanel:SetPoint('TOPLEFT', MainPanel, 'TOPRIGHT', 2, -10)--SetPoint('TOPRIGHT', self.ExSearchButton, 'BOTTOM', 115, 0)
         BlzFilterPanel:SetFrameLevel(self.ActivityList:GetFrameLevel() + 15)
         BlzFilterPanel:EnableMouse(true)
         local Label = BlzFilterPanel:CreateFontString(nil, 'ARTWORK', 'GameFontNormal')
@@ -471,16 +472,16 @@ function BrowsePanel:CreateBlzFilterPanel()
     --createCheckBox(#self.MD + 1, PLAYER_DIFFICULTY_MYTHIC_PLUS,enabled.difficultyMythicPlus,"difficultyMythicPlus",'OnChanged', roleFunc)
 
 
-    local availTank, availHealer, availDPS = C_LFGList.GetAvailableRoles();
-    if availTank then 
+    --local availTank, availHealer, availDPS = C_LFGList.GetAvailableRoles();
+    --if availTank then 
         createCheckBox(#self.MD + 1, LFG_LIST_NEEDS_TANK,enabled.needsTank,"needsTank",'OnChanged', roleFunc)
-    end  
-    if availHealer then 
+    --end  
+    --if availHealer then 
         createCheckBox(#self.MD + 1, LFG_LIST_NEEDS_HEALER,enabled.needsHealer,"needsHealer",'OnChanged',roleFunc)
-    end  
-    if availDPS then 
+    --end  
+    --if availDPS then 
         createCheckBox(#self.MD + 1, LFG_LIST_NEEDS_DAMAGE,enabled.needsDamage,"needsDamage",'OnChanged', roleFunc)
-    end    
+    --end    
     createCheckBox(#self.MD + 1, string.format(LFG_LIST_CLASS_AVAILABLE, PlayerUtil.GetClassName()),enabled.needsMyClass,"needsMyClass",'OnChanged', roleFunc)
     createCheckBox(#self.MD + 1, LFG_LIST_HAS_TANK,enabled.hasTank,"hasTank",'OnChanged', roleFunc)
     createCheckBox(#self.MD + 1, LFG_LIST_HAS_HEALER,enabled.hasHealer,"hasHealer",'OnChanged', roleFunc)
@@ -548,8 +549,8 @@ function BrowsePanel:CreateExSearchButton()
     do
         GUI:Embed(ExFilterPanel, 'Refresh')
         ExFilterPanel:SetSize(200, 180)
-        ExFilterPanel:SetPoint('TOPRIGHT', self.ExSearchButton, 'BOTTOM', 125, 0)
-        ExFilterPanel:SetFrameLevel(self.ActivityList:GetFrameLevel() + 5)
+        ExFilterPanel:SetPoint('TOPLEFT', MainPanel, 'TOPRIGHT', 2, -10)--SetPoint('TOPRIGHT', self.ExSearchButton, 'BOTTOM', 125, 0)
+        ExFilterPanel:SetFrameLevel(self.ActivityList:GetFrameLevel() + 15)
         ExFilterPanel:EnableMouse(true)
         local Label = ExFilterPanel:CreateFontString(nil, 'ARTWORK', 'GameFontNormal')
         do
@@ -691,38 +692,3 @@ end
 
 
 BrowsePanel:EX_INIT()
-
-
-
-function printTable(t, n)
-    if "table" ~= type(t) then
-      return 0;
-    end
-    n = n or 0;
-    local str_space = "";
-    for i = 1, n do
-      str_space = str_space.."  ";
-    end
-    print(str_space.."{");
-    for k, v in pairs(t) do
-      local str_k_v
-      if(type(k)=="string")then
-        str_k_v = str_space.."  "..tostring(k).." = ";
-      else
-        str_k_v = str_space.."  ["..tostring(k).."] = ";
-      end
-      if "table" == type(v) then
-        print(str_k_v);
-        printTable(v, n + 1);
-      else
-        if(type(v)=="string")then
-          str_k_v = str_k_v.."\""..tostring(v).."\"";
-        else
-          str_k_v = str_k_v..tostring(v);
-        end
-        print(str_k_v);
-      end
-    end
-    print(str_space.."}");
-  end
-  
