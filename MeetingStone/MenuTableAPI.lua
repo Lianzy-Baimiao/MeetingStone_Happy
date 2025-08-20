@@ -37,13 +37,21 @@ end
 local function MakeActivityMenuTable(activityId, baseFilter, customId, menuType)
 	--2022-11-17
     --local fullName, shortName, categoryId, groupId, _, filters = C_LFGList.GetActivityInfo(activityId)
-	
+
+
+    
 	local activityInfo = C_LFGList.GetActivityInfoTable(activityId);
 	local fullName = activityInfo.fullName;
 	local shortName = activityInfo.shortName;
 	local categoryId = activityInfo.categoryID;
 	local groupId = activityInfo.groupFinderActivityGroupID;
 	local filters = activityInfo.filters;
+
+    
+    --1574这个地下堡的中文翻译错了11层写成了10层
+    if activityId == 1574 then
+        fullName = string.gsub(fullName , '10' , '11')
+    end      	
 	
     if customId then
         fullName = ACTIVITY_CUSTOM_NAMES[customId]
