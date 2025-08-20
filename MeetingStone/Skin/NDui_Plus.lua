@@ -708,7 +708,8 @@ local once = true
 local frame = CreateFrame("FRAME", "defaultcvar") 
 frame:RegisterEvent("ADDON_LOADED") 
 local function eventHandler(self, event, addOnName)
-    if once and IsAddOnLoaded("NDui_Plus") and IsAddOnLoaded("MeetingStone") then
+    local useNDuiSkin = Profile:GetUseNDuiSkin()
+    if once and IsAddOnLoaded("NDui_Plus") and IsAddOnLoaded("MeetingStone") and useNDuiSkin then
         defaultcvar()
         once = false
     end

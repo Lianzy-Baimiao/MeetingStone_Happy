@@ -34,6 +34,7 @@ function Profile:OnInitialize()
             classIcoMsOnly    = true,
             showWindClassIco  = false,
             useWindSkin       = true,
+            useNDuiSkin       = true,
             enableRaiderIO    = true,
             enableLeaderColor = true,
             filters           = {},
@@ -201,6 +202,9 @@ end
 function Profile:GetUseWindSkin()
     return self:GetGlobalOption('useWindSkin')
 end
+function Profile:GetUseNDuiSkin()
+    return self:GetGlobalOption('useNDuiSkin')
+end
 
 function Profile:GetEnableRaiderIO()
     local region = GetPlayerRegion()
@@ -217,6 +221,7 @@ function Profile:SaveGlobalOption(key, value)
         ['classIcoMsOnly']   = true,
         ['showWindClassIco'] = true,
         ['useWindSkin']      = true,
+        ['useNDuiSkin']      = true,
         ['globalPanelPos']    = true
     }
 

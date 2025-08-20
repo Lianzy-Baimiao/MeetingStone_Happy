@@ -34,6 +34,7 @@ function SettingPanel:OnInitialize()
         ['classIcoMsOnly']    = true,
         ['showWindClassIco']  = true,
         ['useWindSkin']       = true,
+        ['useNDuiSkin']       = true,
         ['enableRaiderIO']    = true,
         ['enableLeaderColor'] = true,
         ['globalPanelPos']    = true
@@ -184,7 +185,7 @@ function SettingPanel:OnInitialize()
                     return not IsAddOnLoaded("ElvUI_WindTools")
                 end
             },
-            -- 增加wind职业图标设置选项
+            -- 增加wind皮肤设置选项
             useWindSkin = {
                 type = 'toggle',
                 name = L['使用Wind皮肤(触发重载UI)'],
@@ -195,6 +196,19 @@ function SettingPanel:OnInitialize()
                 end,
                 disabled = function()
                     return not IsAddOnLoaded("ElvUI_WindTools")
+                end
+            },
+            -- 增加NDui皮肤设置选项
+            useNDuiSkin = {
+                type = 'toggle',
+                name = L['使用NDui皮肤增强(触发重载UI)'],
+                width = 'full',
+                order = order(),
+                hidden = function()
+                    return not IsAddOnLoaded("NDui_Plus")
+                end,
+                disabled = function()
+                    return not IsAddOnLoaded("NDui_Plus")
                 end
             },
             uiScale = {
