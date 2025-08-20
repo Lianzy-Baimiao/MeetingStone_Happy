@@ -271,16 +271,75 @@ BrowsePanel.ActivityList:RegisterFilter(function(activity, ...)
     return activity:Match(...)
 end)
 
+function BrowsePanel:createSeasonFilter()
+    if self.RefreshButton then 
+        self.RefreshButton:SetPoint('TOPRIGHT', MainPanel, 'TOPRIGHT', -180, -38)
+    end
+    
+    if self.AdvButton then 
+        self.AdvButton:SetPoint('LEFT', self.RefreshButton, 'RIGHT', 80, 0)
+    end        
+    local ExSearchButton = CreateFrame('Button', nil, self, 'UIMenuButtonStretchTemplate')
+
+    function btnClick()
+        local activityItem = self.ActivityDropdown:GetItem()
+        if not activityItem then
+            return
+        end
+        local categoryId = activityItem.categoryId
+        if categoryId == 2 then
+            self.BlzFilterPanel:SetShown(not self.BlzFilterPanel:IsShown())
+        else 
+            self.ExFilterPanel:SetShown(not self.ExFilterPanel:IsShown())
+        end    
+    end    
+    do
+        GUI:Embed(ExSearchButton, 'Tooltip')
+        ExSearchButton:SetTooltipAnchor('ANCHOR_RIGHT')
+        ExSearchButton:SetTooltip('过滤器')
+        ExSearchButton:SetSize(83, 31)
+        ExSearchButton:SetPoint('LEFT', self.RefreshButton, 'RIGHT', 0, 0)
+        ExSearchButton:SetText('过滤器')
+        ExSearchButton:SetNormalFontObject('GameFontNormal')
+        ExSearchButton:SetHighlightFontObject('GameFontHighlight')
+        ExSearchButton:SetDisabledFontObject('GameFontDisable')
+
+        if Profile:IsProfileKeyNew('advShine', 60200.09) then
+            local Shine = GUI:GetClass('ShineWidget'):New(ExSearchButton)
+            do
+                Shine:SetPoint('TOPLEFT', 5, -5)
+                Shine:SetPoint('BOTTOMRIGHT', -5, 5)
+               -- Shine:Start()
+            end
+            ExSearchButton.Shine = Shine
+            ExSearchButton:SetScript('OnClick', function()
+                -- Profile:ClearProfileKeyNew('advShine')
+                -- Shine:Stop()
+                -- Shine:Hide()
+                ExSearchButton:SetScript('OnClick', btnClick)
+                ExSearchButton:GetScript('OnClick')(ExSearchButton)
+            end)
+        else
+            ExSearchButton:SetScript('OnClick', btnClick)
+        end
+    end
+    self.ExSearchButton = ExSearchButton
+end    
 
 function BrowsePanel:CreateBlzFilterPanel()
     -- body
     local BlzFilterPanel = CreateFrame('Frame', nil, self, 'SimplePanelTemplate')
+
+    local closeButton = CreateFrame('Button', nil, BlzFilterPanel, 'UIPanelCloseButton')
+        do
+            closeButton:SetPoint('TOPRIGHT', 0, -1)
+        end
 	
     do
         GUI:Embed(BlzFilterPanel, 'Refresh')
-        BlzFilterPanel:SetSize(200, 480)
-        BlzFilterPanel:SetPoint('TOPRIGHT', MainPanel, 'TOPLEFT', 0, 0)
-        BlzFilterPanel:SetFrameLevel(self.ActivityList:GetFrameLevel() + 5)
+        BlzFilterPanel:SetSize(200, 400)
+        BlzFilterPanel:SetPoint('TOPRIGHT', self.ExSearchButton, 'BOTTOM', 115, 0)
+        BlzFilterPanel:SetFrameLevel(self.ActivityList:GetFrameLevel() + 15)
         BlzFilterPanel:EnableMouse(true)
         local Label = BlzFilterPanel:CreateFontString(nil, 'ARTWORK', 'GameFontNormal')
         do
@@ -317,10 +376,10 @@ function BrowsePanel:CreateBlzFilterPanel()
 
     
     function saveAdvFilter()
-        -- enabled.difficultyNormal = false
-        -- enabled.difficultyHeroic = false
-        -- enabled.difficultyMythic = false
-        -- enabled.difficultyMythicPlus = true
+        enabled.difficultyNormal = false
+        enabled.difficultyHeroic = false
+        enabled.difficultyMythic = true
+        enabled.difficultyMythicPlus = true
         -- if enabled.minimumRating == 0 then
         --    enabled.minimumRating = 1
         -- end    
@@ -406,10 +465,10 @@ function BrowsePanel:CreateBlzFilterPanel()
     end
 
 
-    createCheckBox(#self.MD + 1, PLAYER_DIFFICULTY1,enabled.difficultyNormal,"difficultyNormal",'OnChanged', roleFunc)
-    createCheckBox(#self.MD + 1, PLAYER_DIFFICULTY2,enabled.difficultyHeroic,"difficultyHeroic",'OnChanged', roleFunc)
-    createCheckBox(#self.MD + 1, PLAYER_DIFFICULTY6,enabled.difficultyMythic,"difficultyMythic",'OnChanged', roleFunc)
-    createCheckBox(#self.MD + 1, PLAYER_DIFFICULTY_MYTHIC_PLUS,enabled.difficultyMythicPlus,"difficultyMythicPlus",'OnChanged', roleFunc)
+    --createCheckBox(#self.MD + 1, PLAYER_DIFFICULTY1,enabled.difficultyNormal,"difficultyNormal",'OnChanged', roleFunc)
+    --createCheckBox(#self.MD + 1, PLAYER_DIFFICULTY2,enabled.difficultyHeroic,"difficultyHeroic",'OnChanged', roleFunc)
+    --createCheckBox(#self.MD + 1, PLAYER_DIFFICULTY6,enabled.difficultyMythic,"difficultyMythic",'OnChanged', roleFunc)
+    --createCheckBox(#self.MD + 1, PLAYER_DIFFICULTY_MYTHIC_PLUS,enabled.difficultyMythicPlus,"difficultyMythicPlus",'OnChanged', roleFunc)
 
 
     local availTank, availHealer, availDPS = C_LFGList.GetAvailableRoles();
@@ -480,11 +539,16 @@ end
 function BrowsePanel:CreateExSearchButton()
 
     local ExFilterPanel = CreateFrame('Frame', nil, self, 'SimplePanelTemplate')
+
+    local closeButton = CreateFrame('Button', nil, ExFilterPanel, 'UIPanelCloseButton')
+    do
+        closeButton:SetPoint('TOPRIGHT', 0, -1)
+    end
 	
     do
         GUI:Embed(ExFilterPanel, 'Refresh')
         ExFilterPanel:SetSize(200, 180)
-        ExFilterPanel:SetPoint('TOPRIGHT', MainPanel, 'TOPLEFT', 0, -10)
+        ExFilterPanel:SetPoint('TOPRIGHT', self.ExSearchButton, 'BOTTOM', 125, 0)
         ExFilterPanel:SetFrameLevel(self.ActivityList:GetFrameLevel() + 5)
         ExFilterPanel:EnableMouse(true)
         local Label = ExFilterPanel:CreateFontString(nil, 'ARTWORK', 'GameFontNormal')
@@ -535,9 +599,11 @@ end
 
 --添加大秘境过滤功能
 function BrowsePanel:EX_INIT()
+    self:createSeasonFilter()
     self:CreateBlzFilterPanel()
     self:CreateExSearchButton()
 end
+
 
 function BrowsePanel:ToggleActivityMenu(anchor, activity)
     local usable, reason = self:CheckSignUpStatus(activity)
@@ -625,3 +691,38 @@ end
 
 
 BrowsePanel:EX_INIT()
+
+
+
+function printTable(t, n)
+    if "table" ~= type(t) then
+      return 0;
+    end
+    n = n or 0;
+    local str_space = "";
+    for i = 1, n do
+      str_space = str_space.."  ";
+    end
+    print(str_space.."{");
+    for k, v in pairs(t) do
+      local str_k_v
+      if(type(k)=="string")then
+        str_k_v = str_space.."  "..tostring(k).." = ";
+      else
+        str_k_v = str_space.."  ["..tostring(k).."] = ";
+      end
+      if "table" == type(v) then
+        print(str_k_v);
+        printTable(v, n + 1);
+      else
+        if(type(v)=="string")then
+          str_k_v = str_k_v.."\""..tostring(v).."\"";
+        else
+          str_k_v = str_k_v..tostring(v);
+        end
+        print(str_k_v);
+      end
+    end
+    print(str_space.."}");
+  end
+  

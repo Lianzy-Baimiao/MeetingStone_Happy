@@ -419,7 +419,7 @@ function BrowsePanel:OnInitialize()
 
     local ActivityLabel = self:CreateFontString(nil, 'ARTWORK', 'GameFontHighlight')
     do
-        ActivityLabel:SetPoint('TOPLEFT', MainPanel, 'TOPLEFT', 70, -30)
+        ActivityLabel:SetPoint('TOPLEFT', MainPanel, 'TOPLEFT', 30, -30)
         ActivityLabel:SetText(L['活动类型'])
     end
 
@@ -448,21 +448,22 @@ function BrowsePanel:OnInitialize()
                     end    
                     C_LFGList.ClearSearchTextFields()
                 end
-                if data.value == 'mplus' or data.value == '2-0-0-0' then
-                    if self.BlzFilterPanel then
-                        self.BlzFilterPanel:Show()
-                    end 
+                
+                --if data.value == 'mplus' or data.value == '2-0-0-0' then
+                    --if self.BlzFilterPanel then
+                        --self.BlzFilterPanel:Show()
+                    --end 
                     if self.ExFilterPanel then
                         self.ExFilterPanel:Hide()
                     end 
-                else
+                --else
                     if self.BlzFilterPanel then
                         self.BlzFilterPanel:Hide()
                     end
-                    if self.ExFilterPanel then
-                        self.ExFilterPanel:Show()
-                    end 
-                end    
+                    --if self.ExFilterPanel then
+                        --self.ExFilterPanel:Show()
+                    --end 
+                --end    
             end
             -- Modification end
         end)
