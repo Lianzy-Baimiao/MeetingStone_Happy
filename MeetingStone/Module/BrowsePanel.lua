@@ -441,29 +441,31 @@ function BrowsePanel:OnInitialize()
                     self:EndSet()  
                 else
                     if data.value == 'mplus' or data.value == '2-0-0-0' then
-                        self:StartSet()
-                        self.ActivityDropdown:SetValue('2-0-0-0')
-                        self:EndSet()  
-                        self:DoSearch()
+                        -- self:StartSet()
+                        -- self.ActivityDropdown:SetValue('2-0-0-0')
+                        -- self:EndSet()  
+                        C_Timer.After(1, function()
+                            self:DoSearch()
+                        end)
                     end    
                     C_LFGList.ClearSearchTextFields()
                 end
                 
-                --if data.value == 'mplus' or data.value == '2-0-0-0' then
-                    --if self.BlzFilterPanel then
-                        --self.BlzFilterPanel:Show()
-                    --end 
+                if data.value == 'mplus' or data.value == '2-0-0-0' then
+                    if self.BlzFilterPanel then
+                        self.BlzFilterPanel:Show()
+                    end 
                     if self.ExFilterPanel then
                         self.ExFilterPanel:Hide()
                     end 
-                --else
+                else
                     if self.BlzFilterPanel then
                         self.BlzFilterPanel:Hide()
                     end
-                    --if self.ExFilterPanel then
-                        --self.ExFilterPanel:Show()
-                    --end 
-                --end    
+                    if self.ExFilterPanel then
+                        self.ExFilterPanel:Show()
+                    end 
+                end    
             end
             -- Modification end
         end)
@@ -593,12 +595,24 @@ function BrowsePanel:OnInitialize()
                 -- Shine:Hide()
                 AdvButton:SetScript('OnClick', function()
                     self.AdvFilterPanel:SetShown(not self.AdvFilterPanel:IsShown())
+                    if self.ExFilterPanel then
+                        self.ExFilterPanel:Hide()
+                    end 
+                    if self.BlzFilterPanel then
+                        self.BlzFilterPanel:Hide()
+                    end    
                 end)
                 AdvButton:GetScript('OnClick')(AdvButton)
             end)
         else
             AdvButton:SetScript('OnClick', function()
                 self.AdvFilterPanel:SetShown(not self.AdvFilterPanel:IsShown())
+                if self.ExFilterPanel then
+                    self.ExFilterPanel:Hide()
+                end 
+                if self.BlzFilterPanel then
+                    self.BlzFilterPanel:Hide()
+                end    
             end)
         end
     end
