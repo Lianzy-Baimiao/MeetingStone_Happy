@@ -485,7 +485,6 @@ function BrowsePanel:CreateBlzFilterPanel()
     end  
 
 
-    
     for i, id in ipairs(Dungeons) do
         local name = C_LFGList.GetActivityGroupInfo(id)
         createCheckBox(i,name,#enabled.activities==0 or containsValue(enabled.activities,id),id,'OnChanged',function(box)
@@ -503,7 +502,9 @@ function BrowsePanel:CreateBlzFilterPanel()
                 end    
             end
             saveAdvFilter()
-            self.ActivityList:Refresh()
+            --C_Timer.After(1,function()
+                --self.ActivityList:Refresh()
+            --end) 
         end)        
     end
 
@@ -541,7 +542,7 @@ function BrowsePanel:CreateBlzFilterPanel()
             saveAdvFilter()
             for i,v in ipairs(self.MD) do
                 if i<= #Dungeons then
-                    if v.Check:GetChecked() then
+                    if containsValue(enabled.activities,v.dataValue) then
                         v.Check:GetFontString():SetTextColor(GREEN_FONT_COLOR.r, GREEN_FONT_COLOR.g, GREEN_FONT_COLOR.b, 1)
                     else
                         v.Check:GetFontString():SetTextColor(1, 1, 1, 0.5)
