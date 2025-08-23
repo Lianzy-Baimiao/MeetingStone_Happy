@@ -123,8 +123,8 @@ local APPLICANT_LIST_HEADER = {
             --end
         end,
         sortHandler = function(applicant)
-            local score = applicant:GetDungeonScore() or 0
-			local pvPRating = applicant:GetPvPRating() or 0
+            local score = applicant:GetDungeonScore()
+			local pvPRating = applicant:GetPvPRating()
             if applicant:IsMythicPlusActivity() or score > 0 then
                 return _PartySortHandler(applicant) or tostring(9999 - score)
             else

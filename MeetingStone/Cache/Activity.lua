@@ -31,8 +31,6 @@ Activity:InitAttr{
 	'PvpRating',
     'CrossFactionListing',
     'LeaderFactionGroup',
-
-    'CategoryID'
 }
 
 Activity._Objects = setmetatable({}, {__mode = 'v'})
@@ -147,8 +145,6 @@ function Activity:Update()
 	self:SetPvpRating(requiredPvpRating or 0)
 	self:SetCrossFactionListing(crossFactionListing)
     self:SetLeaderFactionGroup(leaderFactionGroup)
-
-    self:SetCategoryID(category)
 
     if not self:UpdateCustomData(comment, title) then
         return false
