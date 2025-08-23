@@ -451,7 +451,7 @@ function BrowsePanel:OnInitialize()
                     C_LFGList.ClearSearchTextFields()
                 end
                 
-                if data.value == 'mplus' or data.value == '2-0-0-0' then
+                if data.value == 'mplus' then
                     if self.BlzFilterPanel then
                         self.BlzFilterPanel:Show()
                     end 
@@ -1075,7 +1075,7 @@ function BrowsePanel:Search()
     end
 
     Profile:SetLastSearchCode(searchCode)
-    LfgService:Search(categoryId, baseFilter, activityId)
+    LfgService:Search(categoryId, baseFilter, activityId, activityItem.value == 'mplus')
     self:UpdateFilters()
 
     self.searchTimer = nil

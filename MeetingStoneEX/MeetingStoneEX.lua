@@ -86,11 +86,10 @@ if MEETINGSTONE_UI_DB.FILTER_MULTY == nil then
 end
 
 --职责过滤
-local function CheckJobsFilter(data, tcount, hcount, dcount, activity, hasDungeon)
+local function CheckJobsFilter(data, tcount, hcount, dcount, activity, isSeasonDungeon)
     local enabled = C_LFGList.GetAdvancedFilter()
-    local isSeasonDungeon = activity and containsValue(enabled.activities,activity:GetGroupID()) or #(enabled.activities)==0 or false
-    if not hasDungeon and isSeasonDungeon then
-        local enabled = C_LFGList.GetAdvancedFilter()
+    local isDungeon = activity and containsValue(enabled.activities,activity:GetGroupID()) or #(enabled.activities)==0 or false
+    if isSeasonDungeon and isDungeon then
         if enabled.needsMyClass then
             local _, myclass, _2 = UnitClass("player")
             for i = 1, activity:GetNumMembers() do
@@ -187,13 +186,14 @@ BrowsePanel.ActivityList:RegisterFilter(function(activity, ...)
         if categoryId ~= activity:GetCategoryID() then
             return false
         end    
-
-        --任务1 地下堡121 地下城2 团队3 jjc4 评级9 自定义6
-        if categoryId == 2 then  
+        if activityItem.value == 'mplus' then
             if not CheckDungeonsFilter(activity) then
                 return false
             end    
-            if not CheckJobsFilter(data, 1, 1, 3, activity, activityId ~= nil)then
+        end    
+        --任务1 地下堡121 地下城2 团队3 jjc4 评级9 自定义6
+        if categoryId == 2 then  
+            if not CheckJobsFilter(data, 1, 1, 3, activity, activityItem.value == 'mplus')then
                 return false
             end
         elseif categoryId == 3 then
@@ -308,8 +308,8 @@ function BrowsePanel:createSeasonFilter()
             self.ExFilterPanel:SetShown(not self.ExFilterPanel:IsShown())
             return
         end
-        local categoryId = activityItem.categoryId
-        if categoryId == 2 then
+        --local categoryId = activityItem.categoryId
+        if activityItem.value == 'mplus' then
             self.BlzFilterPanel:SetShown(not self.BlzFilterPanel:IsShown())
             self.ExFilterPanel:SetShown(false) 
         else 
@@ -487,7 +487,7 @@ function BrowsePanel:CreateBlzFilterPanel()
 
     for i, id in ipairs(Dungeons) do
         local name = C_LFGList.GetActivityGroupInfo(id)
-        createCheckBox(i,name,#enabled.activities==0 or containsValue(enabled.activities,id),id,'OnChanged',function(box)
+        createCheckBox(i,name,#enabled.activities==0 and fasle or containsValue(enabled.activities,id),id,'OnChanged',function(box)
             local value = box.Check:GetChecked()
             local stats,index = containsValue(enabled.activities,box.dataValue)
             if value then
