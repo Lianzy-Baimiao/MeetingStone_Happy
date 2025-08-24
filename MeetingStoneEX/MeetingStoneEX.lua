@@ -16,14 +16,12 @@ local LfgService = Addon:GetModule('LfgService')
 
 if not MEETINGSTONE_UI_DB.IGNORE_LIST then
     MEETINGSTONE_UI_DB.IGNORE_LIST = {}
-end
+end  
 
-local _dungeon = C_LFGList.GetAvailableActivityGroups(GROUP_FINDER_CATEGORY_ID_DUNGEONS, bit.bor(Enum.LFGListFilter.CurrentSeason, Enum.LFGListFilter.PvE))
-if #_dungeon > 0 then
-    MEETINGSTONE_UI_DB.Dungeon_LIST = _dungeon
-elseif  not MEETINGSTONE_UI_DB.Dungeon_LIST then   
-    MEETINGSTONE_UI_DB.Dungeon_LIST = { 323, 324, 326, 371, 381, 261 ,280,281}
-end    
+local Dungeons = C_LFGList.GetAvailableActivityGroups(GROUP_FINDER_CATEGORY_ID_DUNGEONS, bit.bor(Enum.LFGListFilter.CurrentSeason, Enum.LFGListFilter.PvE))
+if #Dungeons == 0 then
+    Dungeons = { 323, 324, 326, 371, 381, 261 ,280,281}
+end
 
 -- if not MEETINGSTONE_UI_DB.CLEAR_IGNORE_LIST_V1 then
 --     MEETINGSTONE_UI_DB.CLEAR_IGNORE_LIST_V1 = false
@@ -182,6 +180,12 @@ BrowsePanel.ActivityList:RegisterFilter(function(activity, ...)
         local categoryId = activityItem.categoryId
         local activityId = activityItem.activityId
 
+
+        --显示自己的队伍
+        if activity:IsSelf() or activity:IsAnyFriend() or activity:IsInActivity() or IsApplication() then
+            return true
+        end    
+    
         --修复自定义搜索文本时会有不对应的内容出现
         if categoryId ~= activity:GetCategoryID() then
             return false
@@ -375,8 +379,6 @@ function BrowsePanel:CreateBlzFilterPanel()
     self.BlzFilterPanel = BlzFilterPanel
     BlzFilterPanel:SetShown(false)
 
-
-    local Dungeons = MEETINGSTONE_UI_DB.Dungeon_LIST
 
     local enabled = C_LFGList.GetAdvancedFilter()
     -- enabled.needsTank = false
