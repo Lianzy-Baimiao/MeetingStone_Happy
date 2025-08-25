@@ -16,7 +16,7 @@ local LfgService = Addon:GetModule('LfgService')
 
 if not MEETINGSTONE_UI_DB.IGNORE_LIST then
     MEETINGSTONE_UI_DB.IGNORE_LIST = {}
-end  
+end
 
 local Dungeons = C_LFGList.GetAvailableActivityGroups(GROUP_FINDER_CATEGORY_ID_DUNGEONS, bit.bor(Enum.LFGListFilter.CurrentSeason, Enum.LFGListFilter.PvE))
 if #Dungeons == 0 then
@@ -182,7 +182,7 @@ BrowsePanel.ActivityList:RegisterFilter(function(activity, ...)
 
 
         --显示自己的队伍
-        if activity:IsSelf() or activity:IsAnyFriend() or activity:IsInActivity() or IsApplication() then
+        if activity:IsSelf() or activity:IsAnyFriend() or activity:IsInActivity() or activity:IsApplication() then
             return true
         end    
     
