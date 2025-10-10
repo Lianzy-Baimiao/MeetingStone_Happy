@@ -264,34 +264,34 @@ BrowsePanel.ActivityList:RegisterFilter(function(activity, ...)
         end
     end
 	
-	local classFilter = MEETINGSTONE_UI_DB.ClassNeed == false
-	local allnoCheck = true
+	-- local classFilter = MEETINGSTONE_UI_DB.ClassNeed == false
+	-- local allnoCheck = true
 	
 
 
-	for i = 1, activity:GetNumMembers() do
-		local role, class, classLocalized, specLocalized = LfgService:GetSearchResultMemberInfo(activity:GetID(), i)
-		if MEETINGSTONE_UI_DB[class] == true  then
-			if MEETINGSTONE_UI_DB.ClassNeed then
-				classFilter = true
-			else
-				classFilter = false
-			end
-		end
-	end
+	-- for i = 1, activity:GetNumMembers() do
+	-- 	local role, class, classLocalized, specLocalized = LfgService:GetSearchResultMemberInfo(activity:GetID(), i)
+	-- 	if MEETINGSTONE_UI_DB[class] == true  then
+	-- 		if MEETINGSTONE_UI_DB.ClassNeed then
+	-- 			classFilter = true
+	-- 		else
+	-- 			classFilter = false
+	-- 		end
+	-- 	end
+	-- end
 	 
 	
-	if classFilter == false then
-		for classID = 1,GetNumClasses() do
-			local className, classFile, classID = GetClassInfo(classID)
-			if MEETINGSTONE_UI_DB[classFile] == true  then
-				allnoCheck = false
-			end
-		end
-	end
-	if allnoCheck == false and classFilter == false then
-		return false
-	end
+	-- if classFilter == false then
+	-- 	for classID = 1,GetNumClasses() do
+	-- 		local className, classFile, classID = GetClassInfo(classID)
+	-- 		if MEETINGSTONE_UI_DB[classFile] == true  then
+	-- 			allnoCheck = false
+	-- 		end
+	-- 	end
+	-- end
+	-- if allnoCheck == false and classFilter == false then
+	-- 	return false
+	-- end
     --改动结束
     return activity:Match(...)
 end)
@@ -743,6 +743,33 @@ function BrowsePanel:GetExSearchs()
     end
     return filters
 end
+
+ 
+function lfgMSGfunc(data, event, resultid, status, prevstatus, title)
+    if not resultid or not (status == 'inviteaccepted') then
+        return false
+    end
+    
+    local info = C_LFGList.GetSearchResultInfo(resultid)
+    local activityID = nil
+    for _, v in pairs (info.activityIDs) do
+        activityID = v
+        break
+    end
+    
+    if not activityID then
+        return false
+    end    
+    
+    local name = C_LFGList.GetActivityFullName(activityID) or "未知活动"
+    local msg =  "队伍详情：" .. name .. " - " .. (title or "")
+    print(">>>> " .. msg)
+    return true
+end
+local lfgMSG = CreateFrame("Frame", nil, UIParent);
+lfgMSG:RegisterEvent("LFG_LIST_APPLICATION_STATUS_UPDATED");
+lfgMSG:SetScript("OnEvent", lfgMSGfunc);
+ 
 
 
 BrowsePanel:EX_INIT()

@@ -272,7 +272,7 @@ local function defaultcvar()
           
           if BrowsePanel.NoResultBlocker then
               S:Proxy("HandleButton", BrowsePanel.NoResultBlocker.Button, nil, nil, nil, true, "Transparent")
-              F.SetFontOutline(BrowsePanel.NoResultBlocker.Label)
+              F.SetFont(BrowsePanel.NoResultBlocker.Label)
           end
           
           if BrowsePanel.AdvFilterPanel then
