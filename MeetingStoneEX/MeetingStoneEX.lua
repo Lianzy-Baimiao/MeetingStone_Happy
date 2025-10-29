@@ -18,10 +18,20 @@ if not MEETINGSTONE_UI_DB.IGNORE_LIST then
     MEETINGSTONE_UI_DB.IGNORE_LIST = {}
 end
 
-local Dungeons = C_LFGList.GetAvailableActivityGroups(GROUP_FINDER_CATEGORY_ID_DUNGEONS, bit.bor(Enum.LFGListFilter.CurrentSeason, Enum.LFGListFilter.PvE))
-if #Dungeons == 0 then
-    Dungeons = { 323, 324, 326, 371, 381, 261 ,280,281}
-end
+local Dungeons
+if MEETINGSTONE_CHARACTER_DB.Remix then
+    --Dungeons = C_LFGList.GetAvailableActivityGroups(GROUP_FINDER_CATEGORY_ID_DUNGEONS)
+    --if #Dungeons == 0 then
+        Dungeons = { 127, 128, 112, 114, 115, 120 ,113,117,118,116,119}
+    --end
+else
+    Dungeons = C_LFGList.GetAvailableActivityGroups(GROUP_FINDER_CATEGORY_ID_DUNGEONS, bit.bor(Enum.LFGListFilter.CurrentSeason, Enum.LFGListFilter.PvE))
+    if #Dungeons == 0 then        
+        Dungeons = { 323, 324, 326, 371, 381, 261 ,280,281}
+    end
+end    
+
+
 
 -- if not MEETINGSTONE_UI_DB.CLEAR_IGNORE_LIST_V1 then
 --     MEETINGSTONE_UI_DB.CLEAR_IGNORE_LIST_V1 = false
@@ -366,7 +376,7 @@ function BrowsePanel:CreateBlzFilterPanel()
 	
     do
         GUI:Embed(BlzFilterPanel, 'Refresh')
-        BlzFilterPanel:SetSize(200, 400)
+        BlzFilterPanel:SetSize(200, 310 + #Dungeons*15)
         BlzFilterPanel:SetPoint('TOPLEFT', MainPanel, 'TOPRIGHT', 2, -10)--SetPoint('TOPRIGHT', self.ExSearchButton, 'BOTTOM', 115, 0)
         BlzFilterPanel:SetFrameLevel(self.ActivityList:GetFrameLevel() + 15)
         BlzFilterPanel:EnableMouse(true)
@@ -770,6 +780,17 @@ local lfgMSG = CreateFrame("Frame", nil, UIParent);
 lfgMSG:RegisterEvent("LFG_LIST_APPLICATION_STATUS_UPDATED");
 lfgMSG:SetScript("OnEvent", lfgMSGfunc);
  
+function checkRemix()
+    local isRemix = C_UnitAuras.GetPlayerAuraBySpellID(1213439)
+    if isRemix then
+        MEETINGSTONE_CHARACTER_DB.Remix = true
+    else
+        MEETINGSTONE_CHARACTER_DB.Remix = false
+    end 
+end    
+local plogin = CreateFrame("Frame", nil, UIParent)
+plogin:RegisterEvent("PLAYER_ENTERING_WORLD")
+plogin:SetScript("OnEvent",checkRemix)
 
 
 BrowsePanel:EX_INIT()
