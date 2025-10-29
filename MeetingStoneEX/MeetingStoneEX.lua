@@ -22,7 +22,7 @@ local Dungeons
 if MEETINGSTONE_CHARACTER_DB.Remix then
     --Dungeons = C_LFGList.GetAvailableActivityGroups(GROUP_FINDER_CATEGORY_ID_DUNGEONS)
     --if #Dungeons == 0 then
-        Dungeons = { 127, 128, 112, 114, 115, 120 ,113,117,118,116,119}
+        Dungeons =  { 127, 128, 112, 114, 115, 120 ,113,117,118,121,119}
     --end
 else
     Dungeons = C_LFGList.GetAvailableActivityGroups(GROUP_FINDER_CATEGORY_ID_DUNGEONS, bit.bor(Enum.LFGListFilter.CurrentSeason, Enum.LFGListFilter.PvE))

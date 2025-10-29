@@ -437,16 +437,16 @@ function ListOfDungeons(menuType)
     --local Dungeons = { 322, 324, 325, 327, 371,266,140,257} 
     --local Activitys = { 1282, 1281, 1283, 1286, 510, 683, 717, 1550}
     
-    local Dungeons =  C_LFGList.GetAvailableActivityGroups(GROUP_FINDER_CATEGORY_ID_DUNGEONS, bit.bor(Enum.LFGListFilter.CurrentSeason, Enum.LFGListFilter.PvE))
-    if #Dungeons then
-        Dungeons = { 323, 324, 326, 371, 381, 261,280,281}
-    end
+    -- local Dungeons =  C_LFGList.GetAvailableActivityGroups(GROUP_FINDER_CATEGORY_ID_DUNGEONS, bit.bor(Enum.LFGListFilter.CurrentSeason, Enum.LFGListFilter.PvE))
+    -- if #Dungeons then
+    --     Dungeons = { 323, 324, 326, 371, 381, 261,280,281}
+    -- end
     
     local Dungeons
     local Activitys
     if MEETINGSTONE_CHARACTER_DB.Remix then
-        Dungeons = { 127, 128, 112, 114, 115, 120 ,113,117,118,116,119}
-        Activitys = {1626,1630,1640,1641,1652,1789,1634,1795,1638,1628,1787}
+        Dungeons = { 127, 128, 112, 114, 115, 120 ,113,117,118,121,119}
+        Activitys = {1793,1794,1782,1783,1785,1789,1788,1795,1790,1791,1787}
     else
         Dungeons = C_LFGList.GetAvailableActivityGroups(GROUP_FINDER_CATEGORY_ID_DUNGEONS, bit.bor(Enum.LFGListFilter.CurrentSeason, Enum.LFGListFilter.PvE))
         if #Dungeons == 0 then        
