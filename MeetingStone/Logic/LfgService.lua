@@ -162,7 +162,7 @@ function LfgService:Search(categoryId, baseFilter, activityId)
     -- end
 
     local languages = C_LFGList.GetLanguageSearchFilter();
-    C_LFGList.Search(categoryId, filterVal, baseFilterVal, languages)
+    C_LFGList.Search(categoryId, filterVal, baseFilter, languages)
     self.ourSearch = false
     self.dirty = false
 end

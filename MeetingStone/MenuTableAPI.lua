@@ -415,8 +415,20 @@ function ListOfDungeons(menuType)
     --local Activitys = { 1282, 1281, 1283, 1286, 510, 683, 717, 1550}
 
     -- 11.2 S3
-    local Dungeons  = { 323, 324, 326, 371, 381, 261,280,281,272}
-    local Activitys  = {1284,1281,1285,1550,1694,699,1016,1017,746}
+    --local Dungeons  = { 323, 324, 326, 371, 381, 261,280,281,272}
+    --local Activitys  = {1284,1281,1285,1550,1694,699,1016,1017,746}
+
+    -- 11.2.7 leg
+
+    local Dungeons
+    local Activitys
+    if MEETINGSTONE_CHARACTER_DB.Remix then
+        Dungeons = { 127, 128, 112, 114, 115, 120 ,113,117,118,121,119}
+        Activitys = {1793,1794,1782,1783,1785,1789,1788,1795,1790,1791,1787}
+    else      
+        Dungeons = { 323, 324, 326, 371, 381, 261 ,280,281}
+        Activitys = {1284,1281,1285,1550,1694,699,1016,1017}
+    end   
   
     -- C_MythicPlus.IsMythicPlusActive()
     -- C_LFGList.GetActivityInfoTable(i)

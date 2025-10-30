@@ -49,9 +49,15 @@ end
 -- /run for i=750,2000 do local info = C_LFGList.GetActivityInfoTable(i); if info then print(i, info.fullName) end end
 
 -- 2023-01-01 使用ID，避免台服文字不匹配
+
 ACTIVITY_NAMES = {}
 do
-    local Activitys = {1284,1281,1285,1550,1694,699,1016,1017,746}
+    local Activitys
+    if MEETINGSTONE_CHARACTER_DB.Remix then
+        Activitys = {1793,1794,1782,1783,1785,1789,1788,1795,1790,1791,1787}
+    else      
+        Activitys = {1284,1281,1285,1550,1694,699,1016,1017}
+    end  
     for k, actId in ipairs(Activitys) do
         local info = C_LFGList.GetActivityInfoTable(actId)
         tinsert(ACTIVITY_NAMES, info.fullName)
@@ -364,7 +370,7 @@ function BrowsePanel:CreateExSearchPanel()
     do
         GUI:Embed(ExSearchPanel, 'Refresh')
         --by 易安玥 调整筛选框大小
-        ExSearchPanel:SetSize(310, 350)
+        ExSearchPanel:SetSize(310, 250 + #ACTIVITY_NAMES*15)
         ExSearchPanel:SetPoint('TOPLEFT', MainPanel, 'TOPRIGHT', 0, -30)
         ExSearchPanel:SetFrameLevel(self.ActivityList:GetFrameLevel() + 5)
         ExSearchPanel:EnableMouse(true)
@@ -712,4 +718,39 @@ function BrowsePanel:SwitchPanel(panel)
     end
 end
 
+function lfgMSGfunc(data, event, resultid, status, prevstatus, title)
+    if not resultid or not (status == 'inviteaccepted') then
+        return false
+    end
+    
+    local info = C_LFGList.GetSearchResultInfo(resultid)
+    local activityID = nil
+    for _, v in pairs (info.activityIDs) do
+        activityID = v
+        break
+    end
+    
+    if not activityID then
+        return false
+    end    
+    
+    local name = C_LFGList.GetActivityFullName(activityID) or "未知活动"
+    local msg =  "队伍详情：" .. name .. " - " .. (title or "")
+    print(">>>> " .. msg)
+    return true
+end
+local lfgMSG = CreateFrame("Frame", nil, UIParent);
+lfgMSG:RegisterEvent("LFG_LIST_APPLICATION_STATUS_UPDATED");
+lfgMSG:SetScript("OnEvent", lfgMSGfunc);
+function checkRemix()
+    local isRemix = C_UnitAuras.GetPlayerAuraBySpellID(1213439)
+    if isRemix then
+        MEETINGSTONE_CHARACTER_DB.Remix = true
+    else
+        MEETINGSTONE_CHARACTER_DB.Remix = false
+    end 
+end    
+local plogin = CreateFrame("Frame", nil, UIParent)
+plogin:RegisterEvent("PLAYER_ENTERING_WORLD")
+plogin:SetScript("OnEvent",checkRemix)
 BrowsePanel:EX_INIT()
