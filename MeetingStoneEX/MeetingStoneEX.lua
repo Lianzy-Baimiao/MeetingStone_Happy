@@ -780,16 +780,21 @@ local lfgMSG = CreateFrame("Frame", nil, UIParent);
 lfgMSG:RegisterEvent("LFG_LIST_APPLICATION_STATUS_UPDATED");
 lfgMSG:SetScript("OnEvent", lfgMSGfunc);
  
+local isChecked = false
 function checkRemix()
+    if isChecked then return end
     local isRemix = C_UnitAuras.GetPlayerAuraBySpellID(1213439)
     if isRemix then
         MEETINGSTONE_CHARACTER_DB.Remix = true
+        isChecked = true
     else
         MEETINGSTONE_CHARACTER_DB.Remix = false
     end 
 end    
 local plogin = CreateFrame("Frame", nil, UIParent)
 plogin:RegisterEvent("PLAYER_ENTERING_WORLD")
+plogin:RegisterEvent("ADDON_LOADED")
+plogin:RegisterEvent("PLAYER_LOGIN")
 plogin:SetScript("OnEvent",checkRemix)
 
 
