@@ -745,6 +745,7 @@ lfgMSG:SetScript("OnEvent", lfgMSGfunc);
 
 local isChecked = false
 function checkRemix()
+    if isChecked then return end
     local isRemix = C_UnitAuras.GetPlayerAuraBySpellID(1213439)
     if isRemix then
         MEETINGSTONE_CHARACTER_DB.Remix = true
