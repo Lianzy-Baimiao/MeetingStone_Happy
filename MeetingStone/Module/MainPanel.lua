@@ -318,7 +318,6 @@ function MainPanel:OnInitialize()
             GameTooltip:SetOwner(self, 'ANCHOR_CURSOR')
             GameTooltip:SetText(
                 '|cFFFF8040点|r|cFFFF8040击|r|cFFFF8040复|r|cFFFF8040制|r|cFFFF0080(|r|cFF8080C0不|r|cFF8080C0行|r|cFF8080C0就|r|cFF8080C0多|r|cFF8080C0点|r|cFF8080C0几|r|cFF8080C0下|r|cFFFF0080)|r')
-            --GameTooltip:AddLine('|cFF0080FFhttps://ngabbs.com/read.php?tid=35102502|r', 1, 1, 1, true)
             GameTooltip:Show()
         end)
         CopyUpdUrlBtn:SetScript('OnLeave', function()

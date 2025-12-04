@@ -197,11 +197,11 @@ function SettingPanel:OnInitialize()
                 disabled = function()
                     return not IsAddOnLoaded("ElvUI_WindTools")
                 end
-            },            
+            },
             -- 增加NDui皮肤设置选项
             useNDuiSkin = {
                 type = 'toggle',
-                name = L['使用NDui皮肤(触发重载UI)'],
+                name = L['使用NDui皮肤增强(触发重载UI)'],
                 width = 'full',
                 order = order(),
                 hidden = function()

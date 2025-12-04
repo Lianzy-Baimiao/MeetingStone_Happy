@@ -118,7 +118,7 @@ local function defaultcvar()
             "MainPanel",
             --"ExchangePanel",
             "BrowsePanel.AdvFilterPanel",
-            "BrowsePanel.ExSearchPanel",
+            "BrowsePanel.BlzFilterPanel",
             "BrowsePanel.ExFilterPanel",
         }
     
@@ -623,11 +623,12 @@ local function defaultcvar()
                 if ExSearchButton then
                     reskinStretchButton(ExSearchButton)
                 end
-
-                local ExSearchPanel = BrowsePanel.ExSearchPanel
-                if ExSearchPanel then
+    
+                local BlzFilterPanel = BrowsePanel.BlzFilterPanel
+                if BlzFilterPanel then
                     --ExSearchPanel:SetPoint("TOPLEFT", MSEnv.MainPanel, "TOPRIGHT", 3, -30)
-                    for _, child in pairs {ExSearchPanel:GetChildren()} do
+                    BlzFilterPanel.bg:SetBackdropBorderColor(1, 1, 1, 1)
+                    for _, child in pairs {BlzFilterPanel:GetChildren()} do
                         if child:GetObjectType() == "Button" then
                             if child:GetText() then
                                 B.Reskin(child)
@@ -636,7 +637,7 @@ local function defaultcvar()
                             end
                         end
                     end
-                    for _, child in pairs {ExSearchPanel.Inset:GetChildren()} do
+                    for _, child in pairs {BlzFilterPanel.Inset:GetChildren()} do
                         if child.Check then
                            B.ReskinCheck(child.Check)
                            child.Check.bg:SetBackdropBorderColor(1, 1, 1, 0.25)

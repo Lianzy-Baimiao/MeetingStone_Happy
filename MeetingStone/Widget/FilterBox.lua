@@ -53,6 +53,7 @@ function FilterBox:Constructor()
     self.MinBox = MinBox
     self.MaxBox = MaxBox
     self.Check = Check
+    self.Text = Text
 end
 
 function FilterBox:UpdateCheck()
