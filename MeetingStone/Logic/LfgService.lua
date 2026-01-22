@@ -151,7 +151,7 @@ function LfgService:Search(categoryId, baseFilter, activityId, isMPlus)
     self.activityId = activityId
     local filterVal = categoryId == GROUP_FINDER_CATEGORY_ID_DUNGEONS and 1 or 0
     local advFilter = isMPlus and categoryId == GROUP_FINDER_CATEGORY_ID_DUNGEONS and (not activityId) and C_LFGList.GetAdvancedFilter() or nil
-   
+
     local languages = C_LFGList.GetLanguageSearchFilter();
     C_LFGList.Search(categoryId, filterVal, baseFilter, languages ,nil ,advFilter)
     self.ourSearch = false
