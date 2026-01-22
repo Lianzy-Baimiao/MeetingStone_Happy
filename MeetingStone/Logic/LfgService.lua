@@ -146,14 +146,23 @@ function LfgService:LFG_LIST_SEARCH_RESULT_UPDATED(_, id)
     self:SendMessage('MEETINGSTONE_ACTIVITIES_RESULT_UPDATED')
 end
 
-function LfgService:Search(categoryId, baseFilter, activityId, isMPlus)
+function LfgService:Search(categoryId, baseFilter, activityId)
     self.ourSearch = true
     self.activityId = activityId
-    local filterVal = categoryId == GROUP_FINDER_CATEGORY_ID_DUNGEONS and 1 or 0
-    local advFilter = isMPlus and categoryId == GROUP_FINDER_CATEGORY_ID_DUNGEONS and (not activityId) and C_LFGList.GetAdvancedFilter() or nil
+    local filterVal = 0
+    if categoryId == 2 then
+        filterVal = 1
+    end
+
+    -- if activityId then
+    --     local activityInfo = C_LFGList.GetActivityInfoTable(activityId);
+    --     print(activityInfo.fullName)
+    --     print(activityInfo.shortName)
+    --     print(activityInfo.groupFinderActivityGroupID)
+    -- end
 
     local languages = C_LFGList.GetLanguageSearchFilter();
-    C_LFGList.Search(categoryId, filterVal, baseFilter, languages ,nil ,advFilter)
+    C_LFGList.Search(categoryId, filterVal, baseFilter, languages)
     self.ourSearch = false
     self.dirty = false
 end
