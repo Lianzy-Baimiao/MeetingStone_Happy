@@ -345,21 +345,27 @@ function EventHandler:PLAYER_LOGIN()
     end
 end
 
+--来自https://bbs.nga.cn/read.php?tid=46107166的修改 ngaid:winada 
 function EventHandler:CHAT_MSG_SYSTEM(_, msg)
-    local name = msg:match(NOT_FOUND_MATCH)
-    if not name then
+    if type(msg) ~= 'string' then
         return
     end
+    pcall(function(msg)
+        local name = string.match(msg, NOT_FOUND_MATCH)
+        if not name then
+            return
+        end
 
-    name = Ambiguate(name, 'none')
+        name = Ambiguate(name, 'none')
 
-    for _, handler in pairs(objects) do
-        if handler.target == name then
-            if handler:IsReady() then
-                handler:DisconnectServer()
+        for _, handler in pairs(objects) do
+            if handler.target == name then
+                if handler:IsReady() then
+                    handler:DisconnectServer()
+                end
             end
         end
-    end
+    end, msg)
 end
 
 EventHandler:CancelAllTimers()
@@ -378,18 +384,26 @@ end
 
 if not SocketHandler.chatFilter then
     ChatFrame_AddMessageEventFilter('CHAT_MSG_SYSTEM', function(_, _, msg)
-        local name = msg:match(NOT_FOUND_MATCH)
-        if not name then
+        if type(msg) ~= 'string' then
             return
         end
-
-        name = Ambiguate(name, 'none')
-
-        for _, handler in pairs(objects) do
-            if handler:IsServer(name) then
-                return true
+        local found = false
+        pcall(function(msg)
+            local name = string.match(msg, NOT_FOUND_MATCH)
+            if not name then
+                return
             end
-        end
+
+            name = Ambiguate(name, 'none')
+
+            for _, handler in pairs(objects) do
+                if handler:IsServer(name) then
+                    found = true
+                    return
+                end
+            end
+        end, msg)
+        return found
     end)
     SocketHandler.chatFilter = true
 end
