@@ -35,7 +35,7 @@ function MainPanel:OnInitialize()
     end)
 
     self:HookScript('OnShow', function()
-        C_LFGList.RequestAvailableActivities()
+        --C_LFGList.RequestAvailableActivities()
         self:UpdateBlockers()
         self:SendMessage('MEETINGSTONE_OPEN')
         if (MEETINGSTONE_UI_E_POINTS ~= nil and MEETINGSTONE_UI_E_POINTS.x ~= nil) then
