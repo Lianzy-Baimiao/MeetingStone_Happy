@@ -20,6 +20,9 @@ local function LFGListGroupDataDisplay_Update(self, activityID, displayData, dis
        if(not activityInfo) then
            return;
        end
+    if activityInfo.categoryID == 121 then
+        activityInfo.displayType = Enum.LFGListDisplayType.RoleEnumerate
+    end      
     --2022-11-17
     if activityInfo.displayType == Enum.LFGListDisplayType.RoleCount or activityInfo.displayType == Enum.LFGListDisplayType.HideAll then
         self.RoleCount:Show()

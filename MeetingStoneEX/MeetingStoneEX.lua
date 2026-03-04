@@ -49,18 +49,13 @@ end
 -- /run for i=750,2000 do local info = C_LFGList.GetActivityInfoTable(i); if info then print(i, info.fullName) end end
 
 -- 2023-01-01 使用ID，避免台服文字不匹配
-
+local Dungeons = { 396, 370,382,392, 398, 399, 400 ,401}
 ACTIVITY_NAMES = {}
 do
-    local Activitys
-    if MEETINGSTONE_CHARACTER_DB.Remix then
-        Activitys = {1793,1794,1782,1783,1785,1789,1788,1795,1790,1791,1787}
-    else      
-        Activitys = {1284,1281,1285,1550,1694,699,1016,1017}
-    end  
-    for k, actId in ipairs(Activitys) do
-        local info = C_LFGList.GetActivityInfoTable(actId)
-        tinsert(ACTIVITY_NAMES, info.fullName)
+    for k, groupId in ipairs(Dungeons) do
+        local _activities = C_LFGList.GetAvailableActivities(GROUP_FINDER_CATEGORY_ID_DUNGEONS,groupId)
+        local actInfo = C_LFGList.GetActivityInfoTable(_activities[#_activities])
+        tinsert(ACTIVITY_NAMES, actInfo.fullName)
     end
 end
 

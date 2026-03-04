@@ -52,7 +52,7 @@ local ln,c={11,14,0,3,18,19,17,8,13,6},{0xf1,0xe4,0xf3,0xf4,0xf1,0xed,0x9f,0xe5,
 
 function Activity:Update()
     local info = C_LFGList.GetSearchResultInfo(self:GetID())
-    if not info then
+    if not info or issecretvalue(info) then
         return
     end
     local id = info.searchResultID

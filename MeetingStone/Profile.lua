@@ -205,6 +205,7 @@ end
 function Profile:GetUseNDuiSkin()
     return self:GetGlobalOption('useNDuiSkin')
 end
+
 function Profile:GetEnableRaiderIO()
     local region = GetPlayerRegion()
     return self:GetGlobalOption('enableRaiderIO') and region ~= "CN"
