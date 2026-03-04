@@ -19,18 +19,19 @@ if not MEETINGSTONE_UI_DB.IGNORE_LIST then
 end
 
 local Dungeons
+--C_LFGList.GetAvailableActivityGroups(GROUP_FINDER_CATEGORY_ID_DUNGEONS, bit.bor(Enum.LFGListFilter.CurrentExpansion, Enum.LFGListFilter.NotCurrentSeason, Enum.LFGListFilter.PvE))
+--C_LFGList.GetAvailableActivities(2,396)
 if MEETINGSTONE_CHARACTER_DB.Remix then
     --Dungeons = C_LFGList.GetAvailableActivityGroups(GROUP_FINDER_CATEGORY_ID_DUNGEONS)
     --if #Dungeons == 0 then
         Dungeons =  { 127, 128, 112, 114, 115, 120 ,113,117,118,121,119,129,133}
     --end
 else
-    Dungeons = C_LFGList.GetAvailableActivityGroups(GROUP_FINDER_CATEGORY_ID_DUNGEONS, bit.bor(Enum.LFGListFilter.CurrentSeason, Enum.LFGListFilter.PvE))
-    if #Dungeons == 0 then        
-        Dungeons = { 323, 324, 326, 371, 381, 261 ,280,281}
-    end
+    --Dungeons = C_LFGList.GetAvailableActivityGroups(GROUP_FINDER_CATEGORY_ID_DUNGEONS, bit.bor(Enum.LFGListFilter.CurrentSeason, Enum.LFGListFilter.PvE))
+    --if #Dungeons == 0 then        
+        Dungeons = { 396, 370,382,392, 398, 399, 400 ,401}
+    --end
 end    
-
 
 
 -- if not MEETINGSTONE_UI_DB.CLEAR_IGNORE_LIST_V1 then
@@ -413,8 +414,8 @@ function BrowsePanel:CreateBlzFilterPanel()
 
     
     function saveAdvFilter()
-        enabled.difficultyNormal = false
-        enabled.difficultyHeroic = false
+        enabled.difficultyNormal = true
+        enabled.difficultyHeroic = true
         enabled.difficultyMythic = true
         enabled.difficultyMythicPlus = true
         -- if enabled.minimumRating == 0 then

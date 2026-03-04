@@ -46,8 +46,6 @@ local function MakeActivityMenuTable(activityId, baseFilter, customId, menuType)
 	local categoryId = activityInfo.categoryID;
 	local groupId = activityInfo.groupFinderActivityGroupID;
 	local filters = activityInfo.filters;
-
-    
     --1574这个地下堡的中文翻译错了11层写成了10层
     if activityId == 1574 then
         fullName = string.gsub(fullName , '10' , '11')
@@ -201,7 +199,7 @@ local function MakeCategoryMenuTable(categoryId, baseFilter, menuType)
     local menuTable = {}
     makedCategorys[categoryId] = true
 
-    if categoryId == 2 or categoryId == 3 then
+    if categoryId == 2 or categoryId == 3 or categoryId == 121 then
         -- for i = #MAX_PLAYER_LEVEL_TABLE, 0, -1 do
         for i = #CATEGORY, 0, -1 do
             local versionMenu = MakeVersionMenuTable(categoryId, i, baseFilter, menuType)
@@ -297,7 +295,7 @@ function GetActivitesMenuTable(menuType)
 
     if menuType == ACTIVITY_FILTER_BROWSE then
 		 tinsert(list, 1, {
-            text = L['|cffffff00赛季大秘境|r'],
+            text = L['|cffffff00赛季地下城|r'],
             notClickable = false,
             hasArrow = false,
             value =  'mplus',
@@ -318,7 +316,7 @@ function GetActivitesMenuTable(menuType)
             menuTable = RefreshHistoryMenuTable(menuType),
         })
         tinsert(list, 2, {
-           text = L['|cffffff00赛季大秘境|r'],
+           text = L['|cffffff00赛季地下城|r'],
            notClickable = true,
            hasArrow = true,
            menuTable = ListOfDungeons(menuType),
@@ -443,9 +441,10 @@ function ListOfDungeons(menuType)
     -- end
     
 
-    --Dungeons = C_LFGList.GetAvailableActivityGroups(GROUP_FINDER_CATEGORY_ID_DUNGEONS, bit.bor(Enum.LFGListFilter.CurrentSeason, Enum.LFGListFilter.PvE))
-    local  Dungeons = { 323, 324, 326, 371, 381, 261 ,280,281}
-    local  Activitys = {1284,1281,1285,1550,1694,699,1016,1017}
+    --local Dungeons = C_LFGList.GetAvailableActivityGroups(GROUP_FINDER_CATEGORY_ID_DUNGEONS, bit.bor(Enum.LFGListFilter.CurrentSeason, Enum.LFGListFilter.PvE))
+    local  Dungeons = { 396, 370,382,392, 398, 399, 400 ,401}--{ 323, 324, 326, 371, 381, 261 ,280,281}
+    --C_LFGList.GetAvailableActivities(2,396)
+    --local  Activitys = {1751,1541,1701,1723,1756,1759,1763,1767}--{1284,1281,1285,1550,1694,699,1016,1017}
  
     --381/1694/生态 324/1281/修道院 326/1285/破晨号 371/1550/水闸 280/1016/天街 281/1017/宏图  261/699/赎罪 323/1284/回响
     
@@ -456,16 +455,18 @@ function ListOfDungeons(menuType)
 
     for k, groupId in ipairs(Dungeons) do
         local data = {}
-        local actInfo = C_LFGList.GetActivityInfoTable(Activitys[k])
+        local _activities = C_LFGList.GetAvailableActivities(GROUP_FINDER_CATEGORY_ID_DUNGEONS,groupId)
+        local actInfo = C_LFGList.GetActivityInfoTable(_activities[#_activities])
+        
 		data.text = actInfo.fullName -- C_LFGList.GetActivityGroupInfo(groupId)
 		data.fullName = actInfo.fullName -- data.text
 		data.categoryId = 2
 		data.groupId = groupId
-        data.activityId = Activitys[k]
+        data.activityId = _activities[#_activities-1]
 		data.baseFilter = 4
 		data.customId = 0
 		data.notClickable = true
-		data.value =  format('2-%d-%d-0',  groupId , Activitys[k])
+		data.value =  format('2-%d-%d-0',  groupId , _activities[#_activities])
         if data then
             local item = {
                 categoryId = data.categoryId,

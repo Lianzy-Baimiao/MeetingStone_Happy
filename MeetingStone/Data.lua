@@ -349,13 +349,65 @@ CATEGORY = {
             [377] = true, -- 解放安德麦
             [378] = true, -- 法力熔炉
             [381] = true, -- 生态原顶
+
+            [331] = true,
+            [332] = true, 
+            [333] = true, 
+            [334] = true, 
+            [335] = true, 
+            [336] = true, 
+            [337] = true, 
+            [338] = true, 
+            [339] = true, 
+            [340] = true, 
+            [341] = true, 
+            [342] = true, 
+            [343] = true, 
+            [373] = true, 
+            [374] = true, 
+            [375] = true, 
         },
         activities = {
             [1289] = true, -- 世界首领
         },
     },
-}
+    [11] = {
+        groups = {
+            --[9] = true, -- 通天峰
+            --[52] = true, -- 萨隆矿坑
+            --[133] = true, -- 执政官之座
+            --[302] = true, -- 艾杰斯亚学院
+            [370] = true, -- 风行者之塔
+            [382] = true, -- 夺目谷
+            [392] = true, -- 纳洛拉克的洞穴
+            [396] = true, -- 密谋小径
+            [398] = true, -- 虚空之痕竞技场
+            [399] = true, -- 魔导师平台
+            [400] = true, -- 迈萨拉洞窟
+            [401] = true, -- 节点希纳斯
 
+            [402] = true, -- 虚影尖塔
+            [403] = true, -- 进军奎尔丹纳斯
+            [404] = true, -- 梦境裂隙
+
+            [405] = true, -- 学府骚动
+            [406] = true, -- 幻日广场
+            [407] = true, -- 戮日圣殿
+            [409] = true, -- 影卫营
+            [410] = true, -- 憎怨斗坑
+            [411] = true, -- 阿塔阿曼
+            [412] = true, -- 回忆深沟
+            [413] = true, -- 聚影领地
+            [414] = true, -- 暮光地穴
+            [415] = true, -- 黑暗回廊
+
+            [408] = true, -- 磨难高地
+        },
+        activities = {
+            [1735] = true, -- 世界首领
+        },
+    },
+}
 --/run a=LFGListFrame.EntryCreation dump(C_LFGList.GetAvailableActivityGroups(a.selectedCategory, bit.bor(a.baseFilters, a.selectedFilters)))
 --/dump C_LFGList.GetActivityGroupInfo(251)
 --/run a=LFGListFrame.EntryCreation dump(C_LFGList.GetAvailableActivities(a.selectedCategory, 0, bit.bor(a.baseFilters, a.selectedFilters)))
