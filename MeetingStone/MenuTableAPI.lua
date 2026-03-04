@@ -462,7 +462,7 @@ function ListOfDungeons(menuType)
 		data.fullName = actInfo.fullName -- data.text
 		data.categoryId = 2
 		data.groupId = groupId
-        data.activityId = _activities[#_activities-1]
+        data.activityId = _activities[#_activities]
 		data.baseFilter = 4
 		data.customId = 0
 		data.notClickable = true
