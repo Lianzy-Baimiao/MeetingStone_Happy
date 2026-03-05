@@ -50,11 +50,13 @@ end
 
 -- 2023-01-01 使用ID，避免台服文字不匹配
 local Dungeons = { 396, 370,382,392, 398, 399, 400 ,401}
+local  Activitys = {1751,1541,1701,1723,1756,1759,1763,1767}
 ACTIVITY_NAMES = {}
 do
     for k, groupId in ipairs(Dungeons) do
-        local _activities = C_LFGList.GetAvailableActivities(GROUP_FINDER_CATEGORY_ID_DUNGEONS,groupId)
-        local actInfo = C_LFGList.GetActivityInfoTable(_activities[#_activities])
+        --local _activities = C_LFGList.GetAvailableActivities(GROUP_FINDER_CATEGORY_ID_DUNGEONS,groupId)
+        local aid = Activitys[k]
+        local actInfo = C_LFGList.GetActivityInfoTable(aid)
         tinsert(ACTIVITY_NAMES, actInfo.fullName)
     end
 end
