@@ -442,6 +442,7 @@ function ListOfDungeons(menuType)
     
 
     --local Dungeons = C_LFGList.GetAvailableActivityGroups(GROUP_FINDER_CATEGORY_ID_DUNGEONS, bit.bor(Enum.LFGListFilter.CurrentSeason, Enum.LFGListFilter.PvE))
+    --C_ChallengeMode.GetMapTable()
     local  Dungeons = { 396, 370,382,392, 398, 399, 400 ,401}--{ 323, 324, 326, 371, 381, 261 ,280,281}
     --C_LFGList.GetAvailableActivities(2,396)
     --local  Activitys = {1751,1541,1701,1723,1756,1759,1763,1767}--{1284,1281,1285,1550,1694,699,1016,1017}
@@ -456,36 +457,40 @@ function ListOfDungeons(menuType)
     for k, groupId in ipairs(Dungeons) do
         local data = {}
         local _activities = C_LFGList.GetAvailableActivities(GROUP_FINDER_CATEGORY_ID_DUNGEONS,groupId)
-        local actInfo = C_LFGList.GetActivityInfoTable(_activities[#_activities])
-        
-		data.text = actInfo.fullName -- C_LFGList.GetActivityGroupInfo(groupId)
-		data.fullName = actInfo.fullName -- data.text
-		data.categoryId = 2
-		data.groupId = groupId
-        data.activityId = _activities[#_activities]
-		data.baseFilter = 4
-		data.customId = 0
-		data.notClickable = true
-		data.value =  format('2-%d-%d-0',  groupId , _activities[#_activities])
-        if data then
-            local item = {
-                categoryId = data.categoryId,
-                groupId = groupId,
-                activityId = data.activityId,
-                customId = data.customId,
-                baseFilter = data.baseFilter,
-                value = data.value,
-                text = data.text, -- ..activitytypeText7,
-                fullName = data.fullName,
-            }
-			
-            if menuType == ACTIVITY_FILTER_BROWSE then
-				--2022-11-17
-				local categoryInfo = C_LFGList.GetLfgCategoryInfo(data.categoryId);
-				item.full = categoryInfo.name
-            end
+        local activityId = tonumber(_activities[#_activities])
+        if activityId then
+            local actInfo = C_LFGList.GetActivityInfoTable(activityId)
+            if actInfo then
+                data.text = actInfo.fullName -- C_LFGList.GetActivityGroupInfo(groupId)
+                data.fullName = actInfo.fullName -- data.text
+                data.categoryId = 2
+                data.groupId = groupId
+                data.activityId = activityId
+                data.baseFilter = 4
+                data.customId = 0
+                data.notClickable = true
+                data.value =  format('2-%d-%d-0',  groupId , activityId)
+                if data then
+                    local item = {
+                        categoryId = data.categoryId,
+                        groupId = groupId,
+                        activityId = data.activityId,
+                        customId = data.customId,
+                        baseFilter = data.baseFilter,
+                        value = data.value,
+                        text = data.text, -- ..activitytypeText7,
+                        fullName = data.fullName,
+                    }
+                    
+                    if menuType == ACTIVITY_FILTER_BROWSE then
+                        --2022-11-17
+                        local categoryInfo = C_LFGList.GetLfgCategoryInfo(data.categoryId);
+                        item.full = categoryInfo.name
+                    end
 
-            tinsert(DungeonsList, item)
+                    tinsert(DungeonsList, item)
+                end
+            end
         end
     end
     return DungeonsList
