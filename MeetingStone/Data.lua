@@ -762,3 +762,10 @@ CATEGORY_BASEFILTERS = {
     [9] = Enum.LFGListFilter.PvP,
     [10] = Enum.LFGListFilter.PvP,
 }
+
+GEMERALPLAYSTYLE = {
+    [Enum.LFGEntryGeneralPlaystyle.Learning] = GROUP_FINDER_GENERAL_PLAYSTYLE1,
+    [Enum.LFGEntryGeneralPlaystyle.FunRelaxed] = GROUP_FINDER_GENERAL_PLAYSTYLE2,
+    [Enum.LFGEntryGeneralPlaystyle.FunSerious] = GROUP_FINDER_GENERAL_PLAYSTYLE3,
+    [Enum.LFGEntryGeneralPlaystyle.Expert] = GROUP_FINDER_GENERAL_PLAYSTYLE4,
+}

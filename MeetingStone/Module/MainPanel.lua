@@ -318,7 +318,6 @@ function MainPanel:OnInitialize()
             GameTooltip:SetOwner(self, 'ANCHOR_CURSOR')
             GameTooltip:SetText(
                 '|cFFFF8040点|r|cFFFF8040击|r|cFFFF8040复|r|cFFFF8040制|r|cFFFF0080(|r|cFF8080C0不|r|cFF8080C0行|r|cFF8080C0就|r|cFF8080C0多|r|cFF8080C0点|r|cFF8080C0几|r|cFF8080C0下|r|cFFFF0080)|r')
-            --GameTooltip:AddLine('|cFF0080FFhttps://ngabbs.com/read.php?tid=35102502|r', 1, 1, 1, true)
             GameTooltip:Show()
         end)
         CopyUpdUrlBtn:SetScript('OnLeave', function()
@@ -383,7 +382,12 @@ function MainPanel:OpenActivityTooltip(activity, tooltip)
     -- tooltip:SetOwner(self, 'ANCHOR_NONE')
     -- tooltip:SetPoint('TOPLEFT', self, 'TOPRIGHT', 1, -10)
     tooltip:AddHeader(activity:GetName(), 1, 1, 1)
-    tooltip:AddLine(activity:GetSummary(), GREEN_FONT_COLOR.r, GREEN_FONT_COLOR.g, GREEN_FONT_COLOR.b, true)
+    
+    if activity:GetGeneralPlaystyle() then
+        tooltip:AddLine( GEMERALPLAYSTYLE[activity:GetGeneralPlaystyle()], GREEN_FONT_COLOR.r, GREEN_FONT_COLOR.g, GREEN_FONT_COLOR.b , true)
+    end    
+
+    tooltip:AddLine(activity:GetSummary(), 1, 1, 1, true)
 
     if activity:GetComment() then
         tooltip:AddLine(activity:GetComment(), GRAY_FONT_COLOR.r, GRAY_FONT_COLOR.g, GRAY_FONT_COLOR.b, true)

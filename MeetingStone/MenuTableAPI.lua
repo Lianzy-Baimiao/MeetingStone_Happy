@@ -424,7 +424,7 @@ function ListOfDungeons(menuType)
 
     -- 11.2.7 leg
 
-    local Dungeons = { 396, 370,382,392, 398, 399, 400 ,401}
+    local Dungeons = {370,399,400,401,9,52,133,302}--{ 396, 370,382,392, 398, 399, 400 ,401}
     --local Activitys = {1284,1281,1285,1550,1694,699,1016,1017} 
   
     -- C_MythicPlus.IsMythicPlusActive()

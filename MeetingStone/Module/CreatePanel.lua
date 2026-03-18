@@ -183,7 +183,7 @@ function CreatePanel:OnInitialize()
     --- options
     local ActivityOptions = GUI:GetClass('TitleWidget'):New(CreateWidget) do
         ActivityOptions:SetPoint('TOPLEFT')
-        ActivityOptions:SetSize(panelWidth, 66)
+        ActivityOptions:SetSize(panelWidth, 96)
         ActivityOptions:SetText(L['请选择活动属性'])
     end
 
@@ -197,6 +197,18 @@ function CreatePanel:OnInitialize()
             self:UpdateControlState()
         end)
     end
+
+    local GeneralPlaystyle = GUI:GetClass('Dropdown'):New(ActivityType) do
+        GeneralPlaystyle:SetPoint('TOP', 0, -30)
+        GeneralPlaystyle:SetSize(170, 26)
+        GeneralPlaystyle:SetDefaultText(L['请选择游戏风格(必需)'])
+        GeneralPlaystyle:SetMaxItem(20)
+        GeneralPlaystyle:SetCallback('OnSelectChanged', function(_, item)
+            self:InitProfile()
+            self:UpdateControlState()
+        end)
+    end
+
 
     local TitleBox = LFGListFrame.EntryCreation.Name
     local TitleWidget = GUI:GetClass('TitleWidget'):New(CreateWidget) do
@@ -457,6 +469,7 @@ function CreatePanel:OnInitialize()
     self.CreateButton = CreateButton
     self.DisbandButton = DisbandButton
     self.ActivityType = ActivityType
+    self.GeneralPlaystyle = GeneralPlaystyle
     self.Score = Score
     self.PrivateGroup = PrivateGroup
     self.CrossFactionGroup = CrossFactionGroup
@@ -645,7 +658,7 @@ function CreatePanel:CreateActivity()
         CustomID = activityItem.customId or 0,
 
         ItemLevel = self.ItemLevel:GetNumber(),
-
+        GeneralPlaystyle = self.GeneralPlaystyle:GetValue(),
         HonorLevel = 0,
 		MythicPlusRating = mScore,
 		PvpRating = pScore,
@@ -687,6 +700,7 @@ function CreatePanel:ClearAllContent()
     self.ItemLevel:SetNumber(0)
     self.Score:SetNumber(0)
     self.ActivityType:SetValue(nil)
+    self.GeneralPlaystyle:SetValue(nil)
     self.PrivateGroup:SetChecked(false)
     self.CrossFactionGroup:SetChecked(true)
 end
@@ -701,6 +715,7 @@ function CreatePanel:UpdateActivity()
         return
     end 
     self.ActivityType:SetValue(activity:GetCode())
+    self.GeneralPlaystyle:SetValue(activity:GetGeneralPlaystyle())
     self.ItemLevel:SetText(activity:GetItemLevel())
     --self.HonorLevel:SetText(activity:GetHonorLevel() or '')
 	  
@@ -816,6 +831,7 @@ end
 
 function CreatePanel:UpdateMenu()
     self.ActivityType:SetMenuTable(GetActivitesMenuTable(ACTIVITY_FILTER_CREATE))
+    self.GeneralPlaystyle:SetMenuTable(self:GetPlayerStyleMenuTable())
 end
 
 function CreatePanel:DisbandActivity()
@@ -830,3 +846,32 @@ function CreatePanel:SelectActivity(value, summary)
         self.ActivityType:SetValue(value)
     end
 end
+
+function CreatePanel:GetPlayerStyleMenuTable()
+    local list = {}
+    tinsert(list, 1, {
+        text = GROUP_FINDER_GENERAL_PLAYSTYLE1,
+        value = Enum.LFGEntryGeneralPlaystyle.Learning,
+        notClickable = false,
+        hasArrow = false,
+    })
+    tinsert(list, 2, {
+        text = GROUP_FINDER_GENERAL_PLAYSTYLE2,
+        value = Enum.LFGEntryGeneralPlaystyle.FunRelaxed,
+        notClickable = false,
+        hasArrow = false,
+    })
+    tinsert(list, 3, {
+        text = GROUP_FINDER_GENERAL_PLAYSTYLE3,
+        value = Enum.LFGEntryGeneralPlaystyle.FunSerious,
+        notClickable = false,
+        hasArrow = false,
+    })
+    tinsert(list, 4, {
+        text = GROUP_FINDER_GENERAL_PLAYSTYLE4,
+        value = Enum.LFGEntryGeneralPlaystyle.Expert,
+        notClickable = false,
+        hasArrow = false,
+    })
+    return list
+end   
