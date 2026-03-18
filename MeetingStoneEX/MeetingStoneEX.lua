@@ -29,7 +29,7 @@ if MEETINGSTONE_CHARACTER_DB.Remix then
 else
     --Dungeons = C_LFGList.GetAvailableActivityGroups(GROUP_FINDER_CATEGORY_ID_DUNGEONS, bit.bor(Enum.LFGListFilter.CurrentSeason, Enum.LFGListFilter.PvE))
     --if #Dungeons == 0 then        
-        Dungeons = { 396, 370,382,392, 398, 399, 400 ,401}
+        Dungeons = {370,399,400,401,9,52,133,302}--{ 396, 370,382,392, 398, 399, 400 ,401}
     --end
 end    
 

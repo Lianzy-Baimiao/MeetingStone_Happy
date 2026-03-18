@@ -9,7 +9,8 @@ CurrentActivity:InitAttr{
 	'QuestID',
 	'MythicPlusRating',
 	'PvpRating',
-	'CrossFactionGroup'
+	'CrossFactionGroup',
+    'GeneralPlaystyle'
 }
 
 function CurrentActivity:FromAddon(data)
@@ -44,6 +45,7 @@ function CurrentActivity:UpdateBySystem(info)
     self:UpdateCustomData(info.comment, info.name)
     self:SetPrivateGroup(info.privateGroup)
     self:SetCrossFactionGroup(info.isCrossFactionListing)
+    self:SetGeneralPlaystyle(info.generalPlaystyle)
 end
 
 function CurrentActivity:GetTitle()
@@ -63,6 +65,7 @@ function CurrentActivity:GetCreateArguments(autoAccept)
 		requiredDungeonScore = self:GetMythicPlusRating(),
 		requiredItemLevel = self:GetItemLevel(),
 		requiredPvpRating = self:GetPvpRating(),
+        generalPlaystyle = self:GetGeneralPlaystyle()
 	};
     return createData	
 end

@@ -282,7 +282,7 @@ local function MakeMenuTable(list, baseFilter, menuType)
     end
 
     return list
-end
+end 
 
 function GetActivitesMenuTable(menuType)
     currentCodeCache = wipe(activityCodeCaches[menuType])
@@ -322,6 +322,7 @@ function GetActivitesMenuTable(menuType)
            menuTable = ListOfDungeons(menuType),
        })
    end
+
 
     -- if UnitLevel('player') >= 70 then
     --     if menuType == ACTIVITY_FILTER_CREATE then
@@ -439,11 +440,10 @@ function ListOfDungeons(menuType)
     -- if #Dungeons then
     --     Dungeons = { 323, 324, 326, 371, 381, 261,280,281}
     -- end
-    
 
     --local Dungeons = C_LFGList.GetAvailableActivityGroups(GROUP_FINDER_CATEGORY_ID_DUNGEONS, bit.bor(Enum.LFGListFilter.CurrentSeason, Enum.LFGListFilter.PvE))
     --C_ChallengeMode.GetMapTable()
-    local  Dungeons = { 396, 370,382,392, 398, 399, 400 ,401}--{ 323, 324, 326, 371, 381, 261 ,280,281}
+    local  Dungeons = {370,399,400,401,9,52,133,302}--{ 396, 370,382,392, 398, 399, 400 ,401}
     --C_LFGList.GetAvailableActivities(2,396)
     --local  Activitys = {1751,1541,1701,1723,1756,1759,1763,1767}--{1284,1281,1285,1550,1694,699,1016,1017}
  

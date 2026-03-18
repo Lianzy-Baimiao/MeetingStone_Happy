@@ -142,6 +142,7 @@ local function defaultcvar()
         local Dropdowns = {
             "BrowsePanel.ActivityDropdown",
             "CreatePanel.ActivityType",
+            "CreatePanel.GeneralPlaystyle",
             "RecentPanel.ActivityDropdown",
             "RecentPanel.ClassDropdown",
             "RecentPanel.RoleDropdown",

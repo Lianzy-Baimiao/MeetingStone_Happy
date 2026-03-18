@@ -31,6 +31,7 @@ Activity:InitAttr{
 	'PvpRating',
     'CrossFactionListing',
     'LeaderFactionGroup',
+    'GeneralPlaystyle',
 
     'CategoryID'
 }
@@ -55,6 +56,9 @@ function Activity:Update()
     if not info or issecretvalue(info) then
         return
     end
+    if issecretvalue(info.activityIDs) or issecretvalue(info.activityIDs[1]) then
+        return
+    end    
     local id = info.searchResultID
     local activityId = info.activityIDs and info.activityIDs[1] or nil
     local title = info.name
@@ -83,6 +87,7 @@ function Activity:Update()
 	--9.2.5
 	local crossFactionListing = info.crossFactionListing
     local leaderFactionGroup = info.leaderFactionGroup
+    local generalPlaystyle = info.generalPlaystyle
 	
     if not activityId then
         return false
@@ -147,6 +152,7 @@ function Activity:Update()
 	self:SetPvpRating(requiredPvpRating or 0)
 	self:SetCrossFactionListing(crossFactionListing)
     self:SetLeaderFactionGroup(leaderFactionGroup)
+    self:SetGeneralPlaystyle(generalPlaystyle)
 
     self:SetCategoryID(category)
 
