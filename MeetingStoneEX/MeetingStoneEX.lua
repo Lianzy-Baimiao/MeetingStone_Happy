@@ -50,16 +50,16 @@ end
 
 -- 2023-01-01 使用ID，避免台服文字不匹配
 local Dungeons = {370,399,400,401,9,52,133,302}--{ 396, 370,382,392, 398, 399, 400 ,401}
-local  Activitys = {1542,1760,1764,1768,182,1770,486,1160}
-ACTIVITY_NAMES = {}
-do
-    for k, groupId in ipairs(Dungeons) do
-        --local _activities = C_LFGList.GetAvailableActivities(GROUP_FINDER_CATEGORY_ID_DUNGEONS,groupId)
-        local aid = Activitys[k]
-        local actInfo = C_LFGList.GetActivityInfoTable(aid)
-        tinsert(ACTIVITY_NAMES, actInfo.fullName)
-    end
-end
+--local  Activitys = {1542,1760,1764,1768,182,1770,486,1160}
+-- ACTIVITY_NAMES = {}
+-- do
+--     for k, groupId in ipairs(Dungeons) do
+--         --local _activities = C_LFGList.GetAvailableActivities(GROUP_FINDER_CATEGORY_ID_DUNGEONS,groupId)
+--         local aid = Activitys[k]
+--         local actInfo = C_LFGList.GetActivityInfoTable(aid)
+--         tinsert(ACTIVITY_NAMES, actInfo.fullName)
+--     end
+-- end
 
 local gameLocale = GetLocale()
 
@@ -205,82 +205,75 @@ BrowsePanel.ActivityList:RegisterFilter(function(activity, ...)
         end
         return false
     end
-
-    local activitytypeText1
-    local activitytypeText2
-    local activitytypeText3
-    local activitytypeText4
-    local activitytypeText5
-    local activitytypeText6
-    local activitytypeText7
     local data = C_LFGList.GetSearchResultMemberCounts(activity:GetID())
     if data then
-        local tcount, hcount, dcount = 1, 1, 3
-        local activitytype = BrowsePanel.ActivityDropdown:GetText()
-        local arenatype = activity:GetName()
-        -- print(activitytype)
-        -- print(arenatype)
-
-        if gameLocale == "zhCN" then
-            activitytypeText1 = '地下城'
-            activitytypeText2 = '团队副本'
-            activitytypeText3 = '评级战场'
-            activitytypeText4 = '竞技场'
-            activitytypeText5 = '竞技场（2v2）'
-            activitytypeText6 = '竞技场（3v3）'
-            activitytypeText7 = '（史诗钥石）'
-        elseif gameLocale == "enUS" then
-            activitytypeText1 = 'Dungeons'
-            activitytypeText2 = 'Raids'
-            activitytypeText3 = 'Rated Battlegrounds'
-            activitytypeText4 = 'Arenas'
-            activitytypeText5 = 'Arena (2v2)'
-            activitytypeText6 = 'Arena (3v3)'
-            activitytypeText7 = ' (Mythic Keystone)'
-        else
-            activitytypeText1 = '地城'
-            activitytypeText2 = '團隊副本'
-            activitytypeText3 = '積分戰場'
-            activitytypeText4 = '競技場'
-            activitytypeText5 = '競技場(2v2)'
-            activitytypeText6 = '競技場(3v3)'
-            activitytypeText7 = '(傳奇鑰石)'
+        local activityItem = BrowsePanel.ActivityDropdown:GetItem()
+        if not activityItem then
+            return
         end
-        if activitytype == activitytypeText1 then
+        local categoryId = activityItem.categoryId
+        local activityId = activityItem.activityId
+        local groupId = activity:GetGroupID() 
+
+        
+        --显示自己的队伍
+        if activity:IsSelf() or activity:IsAnyFriend() or activity:IsInActivity() or activity:IsApplication() then
+            return true
+        end    
+        
+        --修复自定义搜索文本时会有不对应的内容出现
+        if categoryId ~= activity:GetCategoryID() then
+            return false
+        end       
+        --任务1 地下堡121 地下城2 团队3 jjc4 评级9 自定义6
+        if categoryId == 2 then
+            if BrowsePanel.MDSearchs then
+                if not BrowsePanel.MDSearchs[groupId] then
+                    return false
+                end    
+            end
             if not CheckJobsFilter(data, 1, 1, 3, true, activity) then
                 return false
             end
-        elseif activitytype == activitytypeText2 then
+        elseif categoryId == 3 then
             if not CheckJobsFilter(data, 2, 6, 22) then
                 return false
             end
-        elseif activitytype == activitytypeText3 then
-            if not CheckPVPJobsFilter(data, 3, 7) then
-                return false
-            end
-        elseif activitytype == activitytypeText4 then
-            --来自白描MeetingStone_Happy的修改
-            local arenatype = activity:GetName()
-            if arenatype == activitytypeText5 then
+        elseif categoryId == 4 then
+            if activityId == 6 then
                 if not CheckPVPJobsFilter(data, 1, 2) then
                     return false
                 end
             end
-            if arenatype == activitytypeText6 then
+            if activityId == 7 then
                 if not CheckPVPJobsFilter(data, 1, 3) then
                     return false
                 end
             end
+        elseif categoryId == 9 then
+            if not CheckPVPJobsFilter(data, 3, 7) then
+                return false
+            end
         else
-            --9.2.71 尝试修复部分插件地下城分类不一致导致的职责过滤失效问题
-            for i, v in ipairs(ACTIVITY_NAMES) do
-                if activity:GetName() == v .. activitytypeText7 then
+            
+            for i,v in ipairs(Dungeons) do
+                if groupId == v then
                     if not CheckJobsFilter(data, 1, 1, 3, true, activity) then
                         return false
-                    end
+                    end    
                 end
             end
-        end
+        end    
+
+            --9.2.71 尝试修复部分插件地下城分类不一致导致的职责过滤失效问题
+            -- for i, v in ipairs(ACTIVITY_NAMES) do
+            --     if activity:GetName() == v .. activitytypeText7 then
+            --         if not CheckJobsFilter(data, 1, 1, 3, true, activity) then
+            --             return false
+            --         end
+            --     end
+            -- end
+        
     end
 
     if Profile:GetEnableIgnoreTitle() then
@@ -320,13 +313,13 @@ BrowsePanel.ActivityList:RegisterFilter(function(activity, ...)
         end
     end
 
-    if BrowsePanel.ActivityDropdown:GetText() == activitytypeText1 and BrowsePanel.MDSearchs then
-        if BrowsePanel.MDSearchs[activity:GetName()] then
-            --return activity:Match(...)
-        else
-            return false
-        end
-    end
+    -- if BrowsePanel.ActivityDropdown:GetText() == activitytypeText1 and BrowsePanel.MDSearchs then
+    --     if BrowsePanel.MDSearchs[activity:GetName()] then
+    --         --return activity:Match(...)
+    --     else
+    --         return false
+    --     end
+    -- end
 	
 	local classFilter = MEETINGSTONE_UI_DB.ClassNeed == false
 	local allnoCheck = true
@@ -367,7 +360,7 @@ function BrowsePanel:CreateExSearchPanel()
     do
         GUI:Embed(ExSearchPanel, 'Refresh')
         --by 易安玥 调整筛选框大小
-        ExSearchPanel:SetSize(310, 250 + #ACTIVITY_NAMES*15)
+        ExSearchPanel:SetSize(310, 250 + #Dungeons*15)
         ExSearchPanel:SetPoint('TOPLEFT', MainPanel, 'TOPRIGHT', 0, -30)
         ExSearchPanel:SetFrameLevel(self.ActivityList:GetFrameLevel() + 5)
         ExSearchPanel:EnableMouse(true)
@@ -395,10 +388,13 @@ function BrowsePanel:CreateExSearchPanel()
 
     self.MD = {}
 	
-    for i, v in ipairs(ACTIVITY_NAMES) do
+    for i, groupId in ipairs(Dungeons) do
         if not self.MDSearchs then
             self.MDSearchs = {}
         end
+        local groupInfo = C_LFGList.GetActivityGroupInfo(groupId)
+        local v = groupInfo or ""
+
 
         local Box = Addon:GetClass('CheckBox'):New(ExSearchPanel.Inset)
         Box.Check:SetText(v)
@@ -407,7 +403,7 @@ function BrowsePanel:CreateExSearchPanel()
             if not self.MDSearchs then
                 self.MDSearchs = {}
             end
-            self.MDSearchs[text] = box.Check:GetChecked()
+            self.MDSearchs[groupId] = box.Check:GetChecked()
             if not box.Check:GetChecked() then
                 local clear = true
                 for k, v2 in pairs(self.MDSearchs) do
@@ -452,11 +448,11 @@ function BrowsePanel:CreateExSearchPanel()
         Box.Check:SetText(GetClassColoredText(classFile,className))
 		Box:SetSize(90, 20)
 		if classID == 1 then
-			Box:SetPoint('TOPLEFT', self.MD[#ACTIVITY_NAMES + classID - 1], 'BOTTOMLEFT') 
+			Box:SetPoint('TOPLEFT', self.MD[#Dungeons + classID - 1], 'BOTTOMLEFT') 
 		elseif classID%3 == 1 then	
-			Box:SetPoint('TOPLEFT', self.MD[#ACTIVITY_NAMES + classID - 3], 'BOTTOMLEFT') 
+			Box:SetPoint('TOPLEFT', self.MD[#Dungeons + classID - 3], 'BOTTOMLEFT') 
 		else
-			Box:SetPoint('TOPLEFT', self.MD[#ACTIVITY_NAMES + classID - 1],"TOPRIGHT") 
+			Box:SetPoint('TOPLEFT', self.MD[#Dungeons + classID - 1],"TOPRIGHT") 
 		end
 		Box.Check:SetChecked(MEETINGSTONE_UI_DB[classFile] or false)
 		Box:SetCallback('OnChanged', function(box)
@@ -471,7 +467,7 @@ function BrowsePanel:CreateExSearchPanel()
 	
         BoxNeed.Check:SetText("需要")
 		BoxNeed:SetSize(90, 20)
-		BoxNeed:SetPoint('TOPLEFT', self.MD[#ACTIVITY_NAMES + GetNumClasses()],"TOPRIGHT") 
+		BoxNeed:SetPoint('TOPLEFT', self.MD[#Dungeons + GetNumClasses()],"TOPRIGHT") 
 		BoxNeed.Check:SetChecked(MEETINGSTONE_UI_DB.ClassNeed or true)
 		BoxNeed:SetCallback('OnChanged', function(box)
             MEETINGSTONE_UI_DB.ClassNeed = box.Check:GetChecked()
