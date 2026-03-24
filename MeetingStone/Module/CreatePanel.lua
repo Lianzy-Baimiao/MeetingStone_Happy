@@ -201,7 +201,7 @@ function CreatePanel:OnInitialize()
     local GeneralPlaystyle = GUI:GetClass('Dropdown'):New(ActivityType) do
         GeneralPlaystyle:SetPoint('TOP', 0, -30)
         GeneralPlaystyle:SetSize(170, 26)
-        GeneralPlaystyle:SetDefaultText(L['请选择游戏风格(必需)'])
+        GeneralPlaystyle:SetDefaultText(L['请选择游戏风格'])
         GeneralPlaystyle:SetMaxItem(20)
         GeneralPlaystyle:SetCallback('OnSelectChanged', function(_, item)
             self:InitProfile()

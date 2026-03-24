@@ -418,6 +418,10 @@ function BrowsePanel:CreateBlzFilterPanel()
         enabled.difficultyHeroic = true
         enabled.difficultyMythic = true
         enabled.difficultyMythicPlus = true
+        enabled.generalPlaystyle1 = true
+        enabled.generalPlaystyle2 = true
+        enabled.generalPlaystyle3 = true
+        enabled.generalPlaystyle4 = true
         -- if enabled.minimumRating == 0 then
         --    enabled.minimumRating = 1
         -- end    
@@ -500,7 +504,7 @@ function BrowsePanel:CreateBlzFilterPanel()
 
     for i, id in ipairs(Dungeons) do
         local name = C_LFGList.GetActivityGroupInfo(id)
-        createCheckBox(i,name,#enabled.activities==0 and fasle or containsValue(enabled.activities,id),id,'OnChanged',function(box)
+        createCheckBox(i,name,#enabled.activities==0 and false or containsValue(enabled.activities,id),id,'OnChanged',function(box)
             local value = box.Check:GetChecked()
             local stats,index = containsValue(enabled.activities,box.dataValue)
             if value then
