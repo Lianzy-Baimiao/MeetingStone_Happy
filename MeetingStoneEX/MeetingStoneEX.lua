@@ -328,6 +328,9 @@ BrowsePanel.ActivityList:RegisterFilter(function(activity, ...)
 
 	for i = 1, activity:GetNumMembers() do
 		local role, class, classLocalized, specLocalized = GetSearchResultMemberInfo(activity:GetID(), i)
+		if specLocalized == "初始" then 
+            return false
+        end  
 		if MEETINGSTONE_UI_DB[class] == true  then
 			if MEETINGSTONE_UI_DB.ClassNeed then
 				classFilter = true

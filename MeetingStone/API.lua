@@ -211,7 +211,7 @@ end
 function IsMythicPlusActivity(activityId)
     if activityId then
         local activityInfo = C_LFGList.GetActivityInfoTable(activityId);
-        return activityId and activityInfo.isMythicActivity;
+        return activityId and activityInfo.isMythicPlusActivity;
     end
 end
 
