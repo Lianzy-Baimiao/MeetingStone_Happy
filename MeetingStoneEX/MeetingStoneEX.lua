@@ -274,6 +274,13 @@ BrowsePanel.ActivityList:RegisterFilter(function(activity, ...)
             return false
         end
     end
+
+    for i = 1,activity:GetNumMembers() do
+        local role, class, classLocalized, specLocalized = LfgService:GetSearchResultMemberInfo(activity:GetID(), i)
+        if specLocalized == "初始" then 
+            return false
+        end    
+    end    
 	
 	-- local classFilter = MEETINGSTONE_UI_DB.ClassNeed == false
 	-- local allnoCheck = true
