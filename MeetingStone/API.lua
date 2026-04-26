@@ -167,7 +167,7 @@ function CodeDescriptionData(activity)
 end
 
 function DecodeDescriptionData(description)
-    if not description or description == '' then
+    if issecretvalue(description) or not description or description == '' then
         return
     end
     local summary, data = description:match('^(.*)%((.+)%)$')
@@ -193,9 +193,10 @@ function GetActivityCode(activityId, customId, categoryId, groupId)
     if activityId and (not categoryId or not groupId) then
         --2022-11-17
         local activityInfo = C_LFGList.GetActivityInfoTable(activityId);
-        categoryId = activityInfo.categoryID;
-        groupId = activityInfo.groupFinderActivityGroupID;
-        --categoryId, groupId = select(3, C_LFGList.GetActivityInfo(activityId))
+        if activityInfo then
+            categoryId = activityInfo.categoryID or 0;
+            groupId = activityInfo.groupFinderActivityGroupID or 0;
+        end
     end
     return format('%d-%d-%d-%d', categoryId or 0, groupId or 0, activityId or 0, customId or 0)
 end
