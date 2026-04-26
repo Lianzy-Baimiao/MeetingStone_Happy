@@ -347,7 +347,7 @@ end
 
 --来自https://bbs.nga.cn/read.php?tid=46107166的修改 ngaid:winada 
 function EventHandler:CHAT_MSG_SYSTEM(_, msg)
-    if type(msg) ~= 'string' then
+    if issecretvalue(msg) or type(msg) ~= 'string' then
         return
     end
     pcall(function(msg)
