@@ -133,7 +133,14 @@ function Recent:CacheRecent()
     local manager = self:GetRecentManager(activity:GetCode())
 
     for _, unit in IterateGroupUnits() do
-        if not issecretvalue(unit) and UnitExists(unit) and UnitName(unit) ~= UnitName('none') and not UnitIsUnit(unit, 'player') then
+        local _ue = UnitExists(unit)
+        local _un = UnitName(unit)
+        local _unn = UnitName('none')
+        local _uiu = UnitIsUnit(unit, 'player')
+        if issecretvalue(unit) or issecretvalue(_ue) or issecretvalue(_un) or issecretvalue(_unn) or issecretvalue(_uiu) then
+            return
+        end    
+        if _ue and _un ~= _unn and not _uiu then
             local name = UnitFullName(unit)
             local player = manager:GetUnit(name) or RecentPlayer:New(manager)
 
