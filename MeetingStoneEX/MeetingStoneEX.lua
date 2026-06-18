@@ -559,8 +559,8 @@ function BrowsePanel:CreateBlzFilterPanel()
      
     local ResetFilterButton = CreateFrame('Button', nil, BlzFilterPanel, 'UIPanelButtonTemplate')
     do
-        ResetFilterButton:SetSize(160, 22)
-        ResetFilterButton:SetPoint('BOTTOM', BlzFilterPanel, 'BOTTOM', 0, 3)
+        ResetFilterButton:SetSize(100, 22)
+        ResetFilterButton:SetPoint('BOTTOMLEFT', BlzFilterPanel, 'BOTTOMLEFT', 0, 3)
         ResetFilterButton:SetText('搜索更多队伍')
         ResetFilterButton:SetScript('OnClick', function(button)
             saveAdvFilter()
@@ -580,6 +580,23 @@ function BrowsePanel:CreateBlzFilterPanel()
             C_Timer.After(3,function()
                 button:Enable() 
             end)
+        end)
+    end
+
+    local BonusRollButton = CreateFrame('Button', nil, BlzFilterPanel, 'UIPanelButtonTemplate')
+    do
+        BonusRollButton:SetSize(100, 22)
+        BonusRollButton:SetPoint('BOTTOMRIGHT', BlzFilterPanel, 'BOTTOMRIGHT', 0, 3)
+        BonusRollButton:SetText('查看Roll币池')
+        BonusRollButton:SetScript('OnClick', function(button)
+            local base=268465 
+            for _,i in ipairs{0,1,2,3,4,5,6,8} do 
+                local item=Item:CreateFromItemID(base+i) 
+                item:ContinueOnItemLoad(
+                    function()
+                        print(item:GetItemLink())
+                    end)
+            end
         end)
     end
 	
