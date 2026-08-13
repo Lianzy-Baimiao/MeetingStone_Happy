@@ -49,7 +49,7 @@ end
 -- /run for i=750,2000 do local info = C_LFGList.GetActivityInfoTable(i); if info then print(i, info.fullName) end end
 
 -- 2023-01-01 使用ID，避免台服文字不匹配
-local Dungeons = {370,399,400,401,9,52,133,302}--{ 396, 370,382,392, 398, 399, 400 ,401}
+local Dungeons = {396,420,306,382,392,398,139,141}--{ 396, 370,382,392, 398, 399, 400 ,401}
 --local  Activitys = {1542,1760,1764,1768,182,1770,486,1160}
 -- ACTIVITY_NAMES = {}
 -- do
