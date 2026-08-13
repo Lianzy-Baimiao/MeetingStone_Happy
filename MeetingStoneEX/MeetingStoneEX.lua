@@ -29,10 +29,9 @@ if MEETINGSTONE_CHARACTER_DB.Remix then
 else
     --Dungeons = C_LFGList.GetAvailableActivityGroups(GROUP_FINDER_CATEGORY_ID_DUNGEONS, bit.bor(Enum.LFGListFilter.CurrentSeason, Enum.LFGListFilter.PvE))
     --if #Dungeons == 0 then        
-        Dungeons = {370,399,400,401,9,52,133,302}--{ 396, 370,382,392, 398, 399, 400 ,401}
+        Dungeons = {396,420,306,382,392,398,139,141}--{370,399,400,401,9,52,133,302}--{ 396, 370,382,392, 398, 399, 400 ,401}
     --end
 end    
-
 
 -- if not MEETINGSTONE_UI_DB.CLEAR_IGNORE_LIST_V1 then
 --     MEETINGSTONE_UI_DB.CLEAR_IGNORE_LIST_V1 = false
@@ -589,8 +588,8 @@ function BrowsePanel:CreateBlzFilterPanel()
         BonusRollButton:SetPoint('BOTTOMRIGHT', BlzFilterPanel, 'BOTTOMRIGHT', 0, 3)
         BonusRollButton:SetText('查看Roll币池')
         BonusRollButton:SetScript('OnClick', function(button)
-            local base=268465 
-            for _,i in ipairs{0,1,2,3,4,5,6,8} do 
+            local base=279618
+            for _,i in ipairs{5,0,4,1,2,7,6,3} do 
                 local item=Item:CreateFromItemID(base+i) 
                 item:ContinueOnItemLoad(
                     function()
