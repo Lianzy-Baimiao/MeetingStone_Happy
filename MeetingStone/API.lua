@@ -95,7 +95,7 @@ end
 -- end)
 
 function DecodeCommetData(comment)
-    if not comment or comment == '' then
+    if issecretvalue(comment) or (not comment) or comment == '' then
         return true, ''
     end
     local summary, data = comment:match('^(.*)%((^1^.+^^)%)$')
