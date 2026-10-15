@@ -1,4 +1,5 @@
 以下是集合石开心版作者的readme，pull request未被处理无法合并至集合石开心版插件内，新添加了自动申请功能
+
 演示视频：https://www.bilibili.com/video/BV15rHv6mE3S
 
 ---
