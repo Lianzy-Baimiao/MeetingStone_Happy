@@ -552,7 +552,6 @@ local sort = sort
 
 local UnitClass = UnitClass
 local UnitGroupRolesAssigned = UnitGroupRolesAssigned
-local C_LFGList_GetSearchResultMemberInfo = C_LFGList.GetSearchResultMemberInfo
 local hooksecurefunc = hooksecurefunc
 
 local roleCache = {}
@@ -586,7 +585,8 @@ end
 
 local function GetCorrectRoleInfo(frame, i)
     if frame.resultID then
-        return C_LFGList_GetSearchResultMemberInfo(frame.resultID, i)
+        -- The service adapts GetSearchResultPlayerInfo to the member tuple.
+        return LfgService:GetSearchResultMemberInfo(frame.resultID, i)
     elseif frame == ApplicationViewerFrame then
         return GetPartyMemberInfo(i)
     end
