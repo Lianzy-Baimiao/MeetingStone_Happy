@@ -40,6 +40,7 @@ local objects = SocketHandler.objects
 local channels = SocketHandler.channels
 local connectQueue = SocketHandler.connectQueue
 local EventHandler = SocketHandler.EventHandler
+local ListenChat -- defined with the chat filter below
 
 local function OnUsed(registry, target, cmd)
 	-- 禁用网易插件服务
@@ -185,6 +186,7 @@ function SocketHandler:ConnectServer(target)
 
     self:UpdateStatusTable()
     self.statusTable.status = SOCKET_CONNECT
+    ListenChat()
 
     self:RegisterCallback('NETEASE_CONNECT_SUCCESS', 'OnSocket')
     self:RegisterCallback('NETEASE_CHANNEL_OWNER', 'OnSocket')
@@ -268,6 +270,7 @@ function SocketHandler:SetChannel(channelName)
     if self.channelName then
         channels[self.channelName] = channels[self.channelName] or {}
         channels[self.channelName][self] = true
+        ListenChat()
 
         BroadMiddleware.Listen(self, self.channelName)
 
@@ -336,10 +339,7 @@ end
 function EventHandler:PLAYER_LOGIN()
     SocketHandler.isLoggedIn = true
 
-    self:RegisterEvent('PLAYER_LOGOUT')
-    self:RegisterEvent('CHAT_MSG_SYSTEM')
-    self:RegisterEvent('CHAT_MSG_CHANNEL_NOTICE')
-
+    -- Chat listeners start with the first ConnectServer/SetChannel (ListenChat).
     for _, handler in ipairs(connectQueue) do
         handler:TryConnect()
     end
@@ -370,6 +370,7 @@ end
 
 EventHandler:CancelAllTimers()
 EventHandler:UnregisterAllEvents()
+SocketHandler.chatListening = nil
 
 if IsLoggedIn() then
     EventHandler:ScheduleTimer('PLAYER_LOGIN', CONNECT_DELAY)
@@ -382,7 +383,13 @@ end
 
 ---- ChatFilter
 
-if not SocketHandler.chatFilter then
+-- With the NetEase service disabled nothing connects or joins a channel, so
+-- these system/channel listeners and the global channel hooks would only cost
+-- work on every chat line. Install them on first real use instead of at load.
+local function InstallChatFilter()
+    if SocketHandler.chatFilter then
+        return
+    end
     ChatFrame_AddMessageEventFilter('CHAT_MSG_SYSTEM', function(_, _, msg)
         if type(msg) ~= 'string' then
             return
@@ -409,7 +416,12 @@ if not SocketHandler.chatFilter then
 end
 
 ---- hook
-if not SocketHandler.hooked then
+-- Hides NetEase's own channels from the channel UI. Replacing a Blizzard
+-- global is only worth it once such a channel can exist.
+local function InstallChannelHooks()
+    if SocketHandler.hooked then
+        return
+    end
     SocketHandler.hooked = true
 
     local orig_GetChannelDisplayInfo = GetChannelDisplayInfo
@@ -429,4 +441,16 @@ if not SocketHandler.hooked then
             end
         end
     end)
+end
+
+ListenChat = function()
+    InstallChatFilter()
+    InstallChannelHooks()
+    if SocketHandler.chatListening then
+        return
+    end
+    SocketHandler.chatListening = true
+    EventHandler:RegisterEvent('PLAYER_LOGOUT')
+    EventHandler:RegisterEvent('CHAT_MSG_SYSTEM')
+    EventHandler:RegisterEvent('CHAT_MSG_CHANNEL_NOTICE')
 end

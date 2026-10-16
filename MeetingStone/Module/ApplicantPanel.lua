@@ -259,11 +259,11 @@ function ApplicantPanel:OnInitialize()
     self.ApplicantList = ApplicantList
     self.AutoInvite = AutoInvite
 
-    self:RegisterEvent('LFG_LIST_APPLICANT_UPDATED', 'UpdateApplicantsList')
+    -- Each event used to rebuild every Applicant object; one applicant change
+    -- fires several of them. Rebuild at most once per frame.
+    self:RegisterEvent('LFG_LIST_APPLICANT_UPDATED', 'QueueApplicantsList')
     self:RegisterEvent('LFG_LIST_APPLICANT_LIST_UPDATED')
-    self:RegisterEvent('LFG_LIST_ACTIVE_ENTRY_UPDATE', function()
-        self:UpdateApplicantsList()
-    end)
+    self:RegisterEvent('LFG_LIST_ACTIVE_ENTRY_UPDATE', 'QueueApplicantsList')
 
     self:SetScript('OnShow', self.ClearNewPending)
 end
@@ -273,7 +273,7 @@ function ApplicantPanel:LFG_LIST_APPLICANT_LIST_UPDATED(_, hasNewPending, hasNew
 	if self.hasNewPending and Profile:GetSetting("sound") then
         PlaySound(47615, "Master", false)
     end
-    self:UpdateApplicantsList()
+    self:QueueApplicantsList()
     self:SendMessage('MEETINGSTONE_NEW_APPLICANT_STATUS_UPDATE')
     self:UpdateAutoInvite()
 end
@@ -324,6 +324,17 @@ local function _SortApplicants(applicant1, applicant2)
     return (PlainNumber(applicant1:GetIndex()) or 0) < (PlainNumber(applicant2:GetIndex()) or 0)
 end
   
+function ApplicantPanel:QueueApplicantsList()
+    if self.applicantsQueued then
+        return
+    end
+    self.applicantsQueued = true
+    C_Timer.After(0, function()
+        self.applicantsQueued = nil
+        self:UpdateApplicantsList()
+    end)
+end
+
 function ApplicantPanel:UpdateApplicantsList()
     local list = {}
     local applicants = C_LFGList.GetApplicants()

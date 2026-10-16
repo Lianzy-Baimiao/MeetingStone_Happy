@@ -9,25 +9,41 @@ end
 
 function DataGridView:Constructor()
     self.sortButtons = {}
+    -- Sort() wipes sortCache on every refresh, so each key used to be rebuilt
+    -- (a 50x padded string per row). Keep the last key per object and rebuild
+    -- it only when its inputs change; the keys themselves are unchanged.
+    local sortKeys = setmetatable({}, { __mode = 'k' })
     self.sortCache = setmetatable({}, {
         __mode = 'k',
         __index = function(o, k)
-            local value = self:MakeSortValue(k)
-            o[k] = value
-            return value
+            local base, value = self:GetSortInputs(k)
+            local memo = sortKeys[k]
+            if not (memo and memo.base == base and memo.value == value) then
+                memo = { base = base, value = value, key = self:MakeSortValue(k, value, base) }
+                sortKeys[k] = memo
+            end
+            o[k] = memo.key
+            return memo.key
         end,
     })
     self:SetCallback('OnItemCreated', self.OnItemCreated)
     self:SetCallback('OnItemFormatted', self.OnItemFormatted)
 end
 
-function DataGridView:MakeSortValue(object)
-    local value, base
+function DataGridView:GetSortInputs(object)
+    local base, value
     if type(object) == 'table' and object.BaseSortHandler then
         base = object:BaseSortHandler()
     end
     if self.sortHandler then
         value = self.sortHandler(object)
+    end
+    return base, value
+end
+
+function DataGridView:MakeSortValue(object, value, base)
+    if value == nil and base == nil then
+        base, value = self:GetSortInputs(object)
     end
     if not base then
         return value

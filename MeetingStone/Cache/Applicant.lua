@@ -68,9 +68,10 @@ function Applicant:Constructor(id, index, activityId, isMythicPlusActivity)
 	local userFactionIndex  = factionGroup
     local msg, isMeetingStone, progression, pvpRating, source  = DecodeDescriptionData(comment)
 
-	local activeEntryInfo = C_LFGList.GetActiveEntryInfo();
-	activityID = activeEntryInfo.activityIDs[1]
-	
+	-- UpdateApplicantsList passes the active entry's first activity ID; reading
+	-- it again per member wrote a global `activityID` and cost an extra API call.
+	local activityID = activityId
+
 	local bestDungeonScoreForEntry = C_LFGList.GetApplicantDungeonScoreForListing(id, index, activityID);
 	local pvpRatingInfo = C_LFGList.GetApplicantPvpRatingInfoForListing(id, index, activityID);
 	

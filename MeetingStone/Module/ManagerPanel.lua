@@ -68,7 +68,11 @@ function ManagerPanel:OnInitialize()
 end
 
 function ManagerPanel:CheckUseable()
-    C_LFGList.RefreshApplicants()
+    -- Queue/roster events reach this up to ten times a second; applicants
+    -- only exist while we have a listing.
+    if self:HasActivity() then
+        C_LFGList.RefreshApplicants()
+    end
 
     local isLeader = IsGroupLeader()
     local isManager = IsActivityManager()

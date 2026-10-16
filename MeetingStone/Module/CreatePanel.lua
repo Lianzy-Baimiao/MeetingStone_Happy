@@ -625,11 +625,26 @@ end
 function CreatePanel:ChooseWidget()
     local isLeader = IsGroupLeader()
     local isCreated = self:IsActivityCreated()
+    local showCreate = not not (isLeader or not isCreated)
+    local showView = not showCreate
+
+    -- Permission updates arrive with every roster/queue event. Re-showing an
+    -- unchanged widget re-ran every child OnShow (re-borrowing the title,
+    -- description and voice inputs, dropping focus); refresh it in place.
+    if self.CreateWidget:IsShown() == showCreate and self.ViewBoardWidget:IsShown() == showView then
+        if showCreate then
+            self:UpdateActivity()
+            self:UpdateControlState()
+        else
+            self:UpdateActivityView()
+        end
+        return
+    end
 
     self.CreateWidget:Hide()
     self.ViewBoardWidget:Hide()
-    self.CreateWidget:SetShown(isLeader or not isCreated)
-    self.ViewBoardWidget:SetShown(not isLeader and isCreated)
+    self.CreateWidget:SetShown(showCreate)
+    self.ViewBoardWidget:SetShown(showView)
 end
 
 function CreatePanel:CreateActivity()
