@@ -351,7 +351,7 @@ CheckSpamWord, ClearSpamWordCache = memorize.normal(function(word)
     return false
 end)
 
-CheckContent, ClearCheckContentCache = memorize.normal(function(content)
+CheckContent, ClearCheckContentCache, CheckContentCacheSize = memorize.normal(function(content)
     if content == nil then
         return
     end
