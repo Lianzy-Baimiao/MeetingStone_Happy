@@ -14,6 +14,8 @@ CheckBox.lua
 MeetingStoneEX.lua
 IgnoreListPanel.lua
 MysticRemark.lua
+AutoApply.lua
+AutoApplyNote.lua
 
 
 ## X-Vendor: AbyUI
