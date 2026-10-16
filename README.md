@@ -112,3 +112,5 @@ World of Warcraft/
 > 原作者声明：请以收费订阅为目的的插件整合包作者及为插件收费站台者，不要使用此修改版插件。
 
 更新历史请查看仓库内的 [UpdateLog.md](UpdateLog.md)。
+
+本项目采用 [MIT 许可证](LICENSE)；`MeetingStone/Libs/` 下的第三方库保留各自的许可与署名。
