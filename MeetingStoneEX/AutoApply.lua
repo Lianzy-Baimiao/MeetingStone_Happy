@@ -9,6 +9,8 @@ BrowsePanel.AutoApplyController = Controller
 local ROLE_LIMIT = { TANK = 1, HEALER = 1, DAMAGER = 3 }
 local ROLE_NAME = { TANK = '坦克', HEALER = '治疗', DAMAGER = '输出' }
 local REFRESH_INTERVAL = 7
+-- The once-a-second driver runs only while active (set in Start, cleared in Stop).
+local ticker, OnTick
 local function Public(value)
     return not issecretvalue or not issecretvalue(value)
 end
@@ -84,6 +86,9 @@ end
 
 function Controller:Stop(message)
     self.active = false
+    if ticker then
+        ticker:SetScript('OnUpdate', nil)
+    end
     self.button:SetText('自动申请')
     self:SetStatus(message or '已停止；已提交的申请保留，可手动取消。')
 end
@@ -122,7 +127,10 @@ function Controller:Start()
     self.nextRefreshAt = GetTime() + REFRESH_INTERVAL
     self.active = true
     self.elapsed = 0
-    self.button:SetText('停止自动申请')
+    if ticker then
+        ticker:SetScript('OnUpdate', OnTick)
+    end
+    self.button:SetText('停止申请')
     self:SetStatus('按' .. ROLE_NAME[role] .. '职责自动申请中。')
     self:Step()
 end
@@ -144,12 +152,34 @@ function Controller:Exclude(id)
     self.skippedIDs[id] = key or true
 end
 
+function Controller:ForgetApplication(id)
+    -- A cancelled result can have a new ID before the next tracking sync.
+    local info, key = Result(id)
+    local guid = PartyGUID(info)
+    self:Exclude(id)
+    for trackedID, tracked in pairs(self.tracked) do
+        local sameParty
+        if guid and tracked.guid then
+            sameParty = guid == tracked.guid
+        else
+            sameParty = key and key == tracked.key
+        end
+        if trackedID == id or sameParty then
+            self:Exclude(trackedID)
+            self.tracked[trackedID] = nil
+        end
+    end
+end
+
 function Controller:ManualCancel(id)
-    if not self.active or self.autoCancel then
+    if self.autoCancel then
         return
     end
-    self:Exclude(id)
-    self.tracked[id] = nil
+    -- Stopping disables actions, not ownership cleanup for later manual requests.
+    self:ForgetApplication(id)
+    if not self.active then
+        return
+    end
     -- Wait for the server to release the application slot before filling it.
     self.pending = { id = id, action = 'cancel', at = GetTime() }
     self:SetStatus('已跳过手动取消的队伍，等待补申。')
@@ -278,6 +308,10 @@ function Controller:Run()
         return
     end
 
+    if self.partyInvitePending then
+        self:SetStatus('收到组队邀请，暂停申请；请处理邀请。')
+        return
+    end
     -- Never withdraw an invitation because its roster already includes the player.
     local applications = C_LFGList.GetApplications() or {}
     for _, id in ipairs(applications) do
@@ -304,6 +338,16 @@ function Controller:Run()
         return
     end
     self.refreshStarted = nil
+
+    -- Pauses cover withdrawals as well as new applications and searches.
+    if LFGListApplicationDialog and LFGListApplicationDialog:IsShown() then
+        self:SetStatus('正在手动申请，暂时暂停。')
+        return
+    end
+    if BrowsePanel.SearchBox and BrowsePanel.SearchBox:HasFocus() then
+        self:SetStatus('正在编辑搜索条件，暂时暂停。')
+        return
+    end
 
     if self.pending then
         local request = self.pending
@@ -354,14 +398,6 @@ function Controller:Run()
         end
     end
 
-    if LFGListApplicationDialog and LFGListApplicationDialog:IsShown() then
-        self:SetStatus('正在手动申请，暂时暂停。')
-        return
-    end
-    if BrowsePanel.SearchBox and BrowsePanel.SearchBox:HasFocus() then
-        self:SetStatus('正在编辑搜索条件，暂时暂停。')
-        return
-    end
     -- Refresh even at the application cap, so roster changes remain discoverable.
     if self:RefreshSearch() then
         return
@@ -426,11 +462,18 @@ function Controller:Step()
     end
 end
 
-local button = CreateFrame('Button', nil, BrowsePanel, 'UIPanelButtonTemplate')
+-- Same template and fonts as RefreshButton.
+local button = CreateFrame('Button', nil, BrowsePanel, 'UIMenuButtonStretchTemplate')
 Controller.button = button
 BrowsePanel.AutoApplyButton = button
-button:SetSize(120, 22)
-button:SetPoint('LEFT', BrowsePanel.SignUpButton, 'RIGHT', 6, 0)
+-- The bottom bar belongs to role and quick filters (EX and skins). Sit left of
+-- RefreshButton; both anchors give it RefreshButton's height wherever it moves.
+button:SetWidth(74)
+button:SetPoint('TOPRIGHT', BrowsePanel.RefreshButton, 'TOPLEFT', -2, 0)
+button:SetPoint('BOTTOMRIGHT', BrowsePanel.RefreshButton, 'BOTTOMLEFT', -2, 0)
+button:SetNormalFontObject('GameFontNormal')
+button:SetHighlightFontObject('GameFontHighlight')
+button:SetDisabledFontObject('GameFontDisable')
 button:SetText('自动申请')
 button:SetScript('OnClick', function()
     if Controller.active then
@@ -444,7 +487,7 @@ button:SetScript('OnEnter', function(self)
     GameTooltip:SetText('自动申请地下城队伍')
     GameTooltip:AddLine('按当前专精职责，从过滤后的队伍中优先申请人数最多的队伍。', 1, 1, 1, true)
     GameTooltip:AddLine('开启前可填写申请备注，或选择无备注开始。', 1, 1, 1, true)
-    GameTooltip:AddLine('约每 7 秒自动搜索新队伍，并遵守刷新按钮的冷却。', 1, 1, 1, true)
+    GameTooltip:AddLine('搜索返回后约 7 秒再次搜索，并遵守刷新按钮的冷却。', 1, 1, 1, true)
     GameTooltip:AddLine('职责满员时撤销本功能提交的申请，再补申其他队伍。', 1, 1, 1, true)
     GameTooltip:AddLine('最大等待 ' .. Controller.maxWaitSeconds .. ' 秒；超时撤销并加入本轮黑名单。', 1, 1, 1, true)
     GameTooltip:AddLine('可随时点击原有取消按钮；手动取消的队伍本次不会重申。', 1, 0.82, 0, true)
@@ -459,6 +502,15 @@ button:SetScript('OnLeave', GameTooltip_Hide)
 hooksecurefunc(C_LFGList, 'CancelApplication', function(id)
     Controller:ManualCancel(id)
 end)
+hooksecurefunc('DeclineGroup', function()
+    Controller.partyInvitePending = nil
+end)
+hooksecurefunc('AcceptGroup', function()
+    Controller.partyInvitePending = nil
+    if Controller.active then
+        Controller:Stop('已接受邀请，自动申请已停止。')
+    end
+end)
 hooksecurefunc(BrowsePanel, 'DoSearch', function()
     if Controller.active then
         -- Manual refreshes also postpone the next automatic search.
@@ -471,13 +523,116 @@ BrowsePanel:HookScript('OnHide', function()
     end
 end)
 
+-- The quick-join toggles hang off SearchBox's right edge. In the classic UI
+-- build the whole search row sits 40px further right, so their labels would run
+-- under this button. Narrow the borrowed SearchBox just enough (never below
+-- MIN_SEARCH_WIDTH, never wider than the width BrowsePanel:OnShow just set).
+local MIN_SEARCH_WIDTH = 160
+local searchBaseWidth, rowCheckPending
+local hookedRowChecks = {}
+
+local function ScreenEdge(region, edge, scaleOwner)
+    local value = region and region[edge] and region[edge](region)
+    if not value then
+        return
+    end
+    local owner = scaleOwner or region
+    return value * (owner.GetEffectiveScale and owner:GetEffectiveScale() or 1)
+end
+
+local KeepSearchRowClear
+
+local function QueueSearchRowCheck()
+    if rowCheckPending then
+        return
+    end
+    rowCheckPending = true
+    C_Timer.After(0, function()
+        rowCheckPending = nil
+        KeepSearchRowClear()
+    end)
+end
+
+KeepSearchRowClear = function()
+    local box = BrowsePanel.SearchBox
+    if not (searchBaseWidth and BrowsePanel:IsVisible() and button:IsShown() and box and
+        box.GetParent and box.GetWidth and box.SetWidth and box:GetParent() == BrowsePanel) then
+        return
+    end
+    local left, top, bottom = ScreenEdge(button, 'GetLeft'), ScreenEdge(button, 'GetTop'), ScreenEdge(button, 'GetBottom')
+    local boxRight = ScreenEdge(box, 'GetRight')
+    if not (left and top and bottom and boxRight) then
+        return
+    end
+    -- Signed: negative is spare room, so a narrowed box can widen back again.
+    local overlap
+    for _, child in ipairs({ BrowsePanel:GetChildren() }) do
+        if child ~= button and child.GetObjectType and child:GetObjectType() == 'CheckButton' then
+            if not hookedRowChecks[child] and child.SetText then
+                -- Spec/role names and skin fonts change label widths.
+                hookedRowChecks[child] = true
+                hooksecurefunc(child, 'SetText', QueueSearchRowCheck)
+            end
+            local label = child.Text or (child.GetFontString and child:GetFontString())
+            local cLeft = ScreenEdge(child, 'GetLeft')
+            local cTop, cBottom = ScreenEdge(child, 'GetTop'), ScreenEdge(child, 'GetBottom')
+            -- A FontString reports positions in its parent's scale.
+            local right = label and ScreenEdge(label, 'GetRight', child)
+            -- Only toggles that follow SearchBox's right edge can be moved by
+            -- narrowing it; the classic score filter sits above the box instead.
+            if child:IsShown() and cLeft and cTop and cBottom and right and
+                cLeft >= boxRight - 1 and cLeft < left and cTop > bottom and cBottom < top then
+                overlap = math.max(overlap or -math.huge, right + 6 - left)
+            end
+        end
+    end
+    local width = searchBaseWidth
+    if overlap then
+        local scale = box.GetEffectiveScale and box:GetEffectiveScale() or 1
+        local needed = math.floor(box:GetWidth() - overlap / scale)
+        width = math.max(MIN_SEARCH_WIDTH, math.min(searchBaseWidth, needed))
+    end
+    if math.abs(box:GetWidth() - width) > 0.5 then
+        box:SetWidth(width)
+    end
+end
+
+BrowsePanel:HookScript('OnShow', function()
+    local box = BrowsePanel.SearchBox
+    searchBaseWidth = box and box.GetWidth and box:GetWidth() or nil
+    QueueSearchRowCheck()
+end)
+
 local events = CreateFrame('Frame')
+ticker = events
+events:RegisterEvent('LFG_LIST_SEARCH_RESULTS_RECEIVED')
+events:RegisterEvent('LFG_LIST_SEARCH_FAILED')
 events:RegisterEvent('LFG_LIST_APPLICATION_STATUS_UPDATED')
+events:RegisterEvent('PARTY_INVITE_REQUEST')
+events:RegisterEvent('PARTY_INVITE_CANCEL')
 events:RegisterEvent('GROUP_ROSTER_UPDATE')
 events:RegisterEvent('PLAYER_SPECIALIZATION_CHANGED')
 events:RegisterEvent('ADDON_ACTION_BLOCKED')
 events:RegisterEvent('ADDON_ACTION_FORBIDDEN')
 events:SetScript('OnEvent', function(_, event, id, status)
+    if event == 'LFG_LIST_SEARCH_RESULTS_RECEIVED' or event == 'LFG_LIST_SEARCH_FAILED' then
+        -- Give completed results a full application window, even after a slow search.
+        Controller.refreshStarted = nil
+        if Controller.active then
+            Controller.nextRefreshAt = GetTime() + REFRESH_INTERVAL
+        end
+        return
+    end
+    -- Observe invitations while stopped too, so restarting cannot ignore one.
+    if event == 'PARTY_INVITE_REQUEST' then
+        Controller.partyInvitePending = true
+    elseif event == 'PARTY_INVITE_CANCEL' or (event == 'GROUP_ROSTER_UPDATE' and IsInGroup()) then
+        Controller.partyInvitePending = nil
+    end
+    if event == 'LFG_LIST_APPLICATION_STATUS_UPDATED' and
+        (Finished(status) or status == 'inviteaccepted') then
+        Controller:ForgetApplication(id)
+    end
     if not Controller.active then
         return
     end
@@ -492,9 +647,6 @@ events:SetScript('OnEvent', function(_, event, id, status)
     elseif event == 'LFG_LIST_APPLICATION_STATUS_UPDATED' then
         if status == 'inviteaccepted' then
             Controller:Stop('已接受邀请，自动申请已停止。')
-        elseif Finished(status) then
-            Controller:Exclude(id)
-            Controller.tracked[id] = nil
         end
     elseif event == 'GROUP_ROSTER_UPDATE' and IsInGroup() then
         Controller:Stop('已进入队伍，自动申请已停止。')
@@ -502,7 +654,7 @@ events:SetScript('OnEvent', function(_, event, id, status)
         Controller:Stop('专精已改变，请重新开启自动申请。')
     end
 end)
-events:SetScript('OnUpdate', function(_, elapsed)
+OnTick = function(_, elapsed)
     if not Controller.active then
         return
     end
@@ -511,4 +663,4 @@ events:SetScript('OnUpdate', function(_, elapsed)
         Controller.elapsed = 0
         Controller:Step()
     end
-end)
+end
