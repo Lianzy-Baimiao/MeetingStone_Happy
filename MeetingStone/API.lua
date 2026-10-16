@@ -95,7 +95,7 @@ end
 -- end)
 
 function DecodeCommetData(comment)
-    if not comment or comment == '' then
+    if issecretvalue(comment) or (not comment) or comment == '' then
         return true, ''
     end
     local summary, data = comment:match('^(.*)%((^1^.+^^)%)$')
@@ -585,6 +585,7 @@ end
 
 local function GetCorrectRoleInfo(frame, i)
     if frame.resultID then
+        -- The service adapts GetSearchResultPlayerInfo to the member tuple.
         return LfgService:GetSearchResultMemberInfo(frame.resultID, i)
     elseif frame == ApplicationViewerFrame then
         return GetPartyMemberInfo(i)
