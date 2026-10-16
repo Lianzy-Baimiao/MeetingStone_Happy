@@ -45,18 +45,39 @@ end
 
 
 
+-- 名单是常量：只解码、筛选一次（本服区域、本项目、等级 < 3），不再每次队伍变动 × 每名队友 × 每行重新解码
+local wanted
+local function WantedLines()
+    if wanted then
+        return wanted
+    end
+    local region = GetCurrentRegionName()
+    if not region then
+        return {} -- 登录早期区域尚不可用，下次再算
+    end
+    wanted = {}
+    for _, line in ipairs(roster) do
+        local regionName, projectId, charactarGUID, charactarWantedLevel, charactarRemark = unpack(decode(line, ","))
+        if regionName == region and tonumber(projectId) == WOW_PROJECT_ID and tonumber(charactarWantedLevel) < 3 then
+            wanted[#wanted + 1] = { guid = charactarGUID, remark = charactarRemark }
+        end
+    end
+    return wanted
+end
+
 -- 检查输出结果
 local PerformCompare = function(self)
-    for i = 1, GetNumGroupMembers() - 1 do
+    local lines = WantedLines()
+    -- 只有 party1–party4 存在；团队里 GetNumGroupMembers() 可到 40，原来会为不存在的单位空转
+    for i = 1, math.min(GetNumGroupMembers() - 1, 4) do
         local groupMemberUnitID = string.format("party%d", i)
         local groupMemberUnitName = UnitName(groupMemberUnitID)
         local groupMemberUnitGUID = UnitGUID(groupMemberUnitID)
-        for index, line in pairs(roster) do
-            local regionName, projectId, charactarGUID, charactarWantedLevel, charactarRemark = unpack(decode(line, ","))
-            if regionName == GetCurrentRegionName() and tonumber(projectId) == WOW_PROJECT_ID and tonumber(charactarWantedLevel) < 3 and groupMemberUnitGUID then
+        if not (issecretvalue and issecretvalue(groupMemberUnitGUID)) and groupMemberUnitGUID then
+            for _, line in ipairs(lines) do
                 for groupMemberCharactarGUID in string.gmatch(groupMemberUnitGUID, "Player-.*-(.*)") do
-                    if groupMemberCharactarGUID == charactarGUID then
-                        local message = string.format("集合石提醒: %s(%s) %s", groupMemberUnitName, groupMemberUnitGUID, charactarRemark)
+                    if groupMemberCharactarGUID == line.guid then
+                        local message = string.format("集合石提醒: %s(%s) %s", groupMemberUnitName, groupMemberUnitGUID, line.remark)
                         RaidNotice_AddMessage(RaidWarningFrame, message, ChatTypeInfo["RAID_WARNING"])
                         SendChatMessage(message, "PARTY")
                     end

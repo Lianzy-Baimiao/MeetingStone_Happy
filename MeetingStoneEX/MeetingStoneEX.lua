@@ -752,7 +752,7 @@ function checkRemix()
 end    
 local plogin = CreateFrame("Frame", nil, UIParent)
 plogin:RegisterEvent("PLAYER_ENTERING_WORLD")
-plogin:RegisterEvent("ADDON_LOADED")
+-- ADDON_LOADED 每加载一个插件就触发一次，非 Remix 角色会一直重复查光环；登录和进入世界时检查即可
 plogin:RegisterEvent("PLAYER_LOGIN")
 plogin:SetScript("OnEvent",checkRemix)
 BrowsePanel:EX_INIT()
