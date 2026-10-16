@@ -466,11 +466,12 @@ end
 local button = CreateFrame('Button', nil, BrowsePanel, 'UIMenuButtonStretchTemplate')
 Controller.button = button
 BrowsePanel.AutoApplyButton = button
--- The bottom bar belongs to role and quick filters (EX and skins). Sit left of
--- RefreshButton; both anchors give it RefreshButton's height wherever it moves.
+-- The bottom bar belongs to role and quick filters (EX and skins). Sit flush left
+-- of RefreshButton, like the filter buttons on its right; both anchors give it
+-- RefreshButton's height wherever it moves.
 button:SetWidth(74)
-button:SetPoint('TOPRIGHT', BrowsePanel.RefreshButton, 'TOPLEFT', -2, 0)
-button:SetPoint('BOTTOMRIGHT', BrowsePanel.RefreshButton, 'BOTTOMLEFT', -2, 0)
+button:SetPoint('TOPRIGHT', BrowsePanel.RefreshButton, 'TOPLEFT', 0, 0)
+button:SetPoint('BOTTOMRIGHT', BrowsePanel.RefreshButton, 'BOTTOMLEFT', 0, 0)
 button:SetNormalFontObject('GameFontNormal')
 button:SetHighlightFontObject('GameFontHighlight')
 button:SetDisabledFontObject('GameFontDisable')
