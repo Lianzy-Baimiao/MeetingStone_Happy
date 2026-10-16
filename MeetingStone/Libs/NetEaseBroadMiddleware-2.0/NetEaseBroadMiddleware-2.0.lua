@@ -36,8 +36,9 @@ local PACKET_LAST  = '$'
 local PACKET_ONE   = '@'
 local MAX_LEN = 254
 
+-- CHAT_MSG_CHANNEL fires for every public channel line. Register it only once
+-- Listen() adds a channel; with the NetEase service disabled that never happens.
 EventHandler:UnregisterAllEvents()
-EventHandler:RegisterEvent('CHAT_MSG_CHANNEL')
 EventHandler:SetScript('OnEvent', function(self, event, msg, target, _, _, _, flag, _, channelId, channelName)
     if not channels[channelName] then
         return
@@ -106,6 +107,7 @@ function BroadMiddleware:Listen(channelName)
 
     channels[channelName] = true
     channels[self] = channelName
+    EventHandler:RegisterEvent('CHAT_MSG_CHANNEL')
 end
 
 function BroadMiddleware:Send(cmd, ...)

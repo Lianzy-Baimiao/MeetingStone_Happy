@@ -28,7 +28,8 @@ function Recent:OnInitialize()
     self:RegisterMessage('MEETINGSTONE_DB_SHUTDOWN')
     self:RegisterMessage('MEETINGSTONE_GROUP_CLOSED')
     self:RegisterBucketMessage('MEETINGSTONE_MEMBER_UPDATE', 2, 'CacheRecent')
-    self:RegisterBucketMessage('MEETINGSTONE_MEMBER_UPDATE', 10, 'BroadcastInfo')
+    -- 网易服务已禁用：BroadcastInfo 不再发送任何内容，不再定时调用
+    -- self:RegisterBucketMessage('MEETINGSTONE_MEMBER_UPDATE', 10, 'BroadcastInfo')
 
     -- self:ListenSocket('NE_RECENT')
     -- self:RegisterSocket('RECENT_INFO')
@@ -101,12 +102,16 @@ end
 
 function Recent:LFG_LIST_ACTIVE_ENTRY_UPDATE()
     if C_LFGList.HasActiveEntryInfo() then
+        -- 重新上架时取消上次下架留下的清除计时，避免 5 分钟后清掉新活动
+        self:CancelTimer(self.clearTimer)
+        self.clearTimer = nil
         local activity = CreatePanel:GetCurrentActivity()
         if not activity:IsSoloActivity() then
             self.activity = CreatePanel:GetCurrentActivity()
         end
-    else
-        self:ScheduleTimer(function()
+    elseif not self.clearTimer then
+        self.clearTimer = self:ScheduleTimer(function()
+            self.clearTimer = nil
             self.activity = nil
         end, 300)
     end
@@ -121,6 +126,7 @@ end
 
 function Recent:MEETINGSTONE_GROUP_CLOSED()
     self:CancelAllTimers()
+    self.clearTimer = nil
     self.activity = nil
 end
 
