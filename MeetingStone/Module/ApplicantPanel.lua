@@ -287,11 +287,41 @@ function ApplicantPanel:ClearNewPending()
     self:SendMessage('MEETINGSTONE_NEW_APPLICANT_STATUS_UPDATE')
 end
 
-local function _SortApplicants(applicant1, applicant2)
-    if applicant1:IsNew() ~= applicant2:IsNew() then
-        return applicant2:IsNew()
+-- Applicant fields can be secret while MeetingStone code is tainted (12.x).
+-- Secret values cannot be compared or tested, so sort on plain keys only.
+local function PlainNumber(value)
+    if issecretvalue and issecretvalue(value) then
+        return
     end
-    return applicant1:GetOrderID() < applicant2:GetOrderID()
+    return type(value) == 'number' and value or nil
+end
+
+local function NewApplicantKey(applicant)
+    local isNew = applicant:IsNew()
+    if issecretvalue and issecretvalue(isNew) then
+        return 0
+    end
+    return isNew and 1 or 0
+end
+
+local function _SortApplicants(applicant1, applicant2)
+    -- New applicants go to the bottom, as in Blizzard's LFGListUtil_SortApplicantsCB.
+    local new1, new2 = NewApplicantKey(applicant1), NewApplicantKey(applicant2)
+    if new1 ~= new2 then
+        return new1 < new2
+    end
+    local id1 = PlainNumber(applicant1:GetID()) or 0
+    local id2 = PlainNumber(applicant2:GetID()) or 0
+    -- Fall back to the applicant ID when displayOrderID is restricted.
+    local order1 = PlainNumber(applicant1:GetOrderID()) or id1
+    local order2 = PlainNumber(applicant2:GetOrderID()) or id2
+    if order1 ~= order2 then
+        return order1 < order2
+    end
+    if id1 ~= id2 then
+        return id1 < id2
+    end
+    return (PlainNumber(applicant1:GetIndex()) or 0) < (PlainNumber(applicant2:GetIndex()) or 0)
 end
   
 function ApplicantPanel:UpdateApplicantsList()
