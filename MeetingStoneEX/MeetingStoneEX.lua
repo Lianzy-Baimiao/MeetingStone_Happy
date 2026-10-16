@@ -93,20 +93,55 @@ if MEETINGSTONE_UI_DB.FILTER_MULTY == nil then
     MEETINGSTONE_UI_DB.FILTER_MULTY = true
 end
 
+-- 过滤性能：过滤器每次刷新都会对全部结果逐行执行。暴雪高级过滤每次调用都新建表，
+-- 这里每轮过滤只读取一次；成员职业/专精按活动缓存，收到该结果的更新事件后重新读取。
+local filterPassAdvanced
+local issecretvalue = issecretvalue or function() return false end
+
+local function AdvancedFilter()
+    if filterPassAdvanced then
+        return filterPassAdvanced
+    end
+    return C_LFGList.GetAdvancedFilter()
+end
+
+local memberSnapshots = setmetatable({}, { __mode = 'k' })
+
+local function MemberSnapshot(activity)
+    local numMembers = activity:GetNumMembers()
+    local snapshot = memberSnapshots[activity]
+    if snapshot and snapshot.numMembers == numMembers then
+        return snapshot
+    end
+    snapshot = { numMembers = numMembers, classes = {}, specs = {}, complete = true }
+    for i = 1, numMembers do
+        local _, class, _, spec = LfgService:GetSearchResultMemberInfo(activity:GetID(), i)
+        if class == nil or spec == nil or issecretvalue(class) or issecretvalue(spec) then
+            -- Unknown or restricted member data: answer this pass only, read again next time.
+            snapshot.complete = false
+            class = (class ~= nil and not issecretvalue(class)) and class or nil
+            spec = (spec ~= nil and not issecretvalue(spec)) and spec or nil
+        end
+        snapshot.classes[i], snapshot.specs[i] = class, spec
+    end
+    memberSnapshots[activity] = snapshot.complete and snapshot or nil
+    return snapshot
+end
+
 --职责过滤
 local function CheckJobsFilter(data, tcount, hcount, dcount, activity, isSeasonDungeon)
-    local enabled = C_LFGList.GetAdvancedFilter()
+    local enabled = AdvancedFilter()
     local isDungeon = activity and containsValue(enabled.activities,activity:GetGroupID()) or #(enabled.activities)==0 or false
     if isSeasonDungeon and isDungeon then
         if enabled.needsMyClass then
             local _, myclass, _2 = UnitClass("player")
+            local classes = MemberSnapshot(activity).classes
             for i = 1, activity:GetNumMembers() do
-                local _, class = LfgService:GetSearchResultMemberInfo(activity:GetID(), i)
-                if class == myclass then
+                if classes[i] == myclass then
                     return false
                 end
             end
-        end 
+        end
         return (not enabled.needsHealer and not enabled.needsDamage or (enabled.needsHealer and data.HEALER < hcount) or (enabled.needsDamage and data.DAMAGER < dcount)) 
             and (not enabled.hasTank or data.TANK >= tcount )
             and (not enabled.needsTank or data.TANK < tcount)
@@ -141,7 +176,7 @@ local function CheckPVPJobsFilter(data, hcount, dcount)
 end
 --副本过滤
 local function CheckDungeonsFilter(activity)
-    local enabled = C_LFGList.GetAdvancedFilter()
+    local enabled = AdvancedFilter()
     local result = false
     groupID = activity:GetGroupID()
     for i,v in ipairs(enabled.activities) do
@@ -274,12 +309,12 @@ BrowsePanel.ActivityList:RegisterFilter(function(activity, ...)
         end
     end
 
+    local specs = MemberSnapshot(activity).specs
     for i = 1,activity:GetNumMembers() do
-        local role, class, classLocalized, specLocalized = LfgService:GetSearchResultMemberInfo(activity:GetID(), i)
-        if specLocalized == "初始" then 
+        if specs[i] == "初始" then
             return false
-        end    
-    end    
+        end
+    end
 	
 	-- local classFilter = MEETINGSTONE_UI_DB.ClassNeed == false
 	-- local allnoCheck = true
@@ -312,6 +347,28 @@ BrowsePanel.ActivityList:RegisterFilter(function(activity, ...)
     --改动结束
     return activity:Match(...)
 end)
+
+do
+    -- One advanced-filter snapshot per filter pass (see AdvancedFilter above).
+    local list = BrowsePanel.ActivityList
+    local updateFilter = list.UpdateFilter
+    function list:UpdateFilter(...)
+        filterPassAdvanced = C_LFGList.GetAdvancedFilter()
+        updateFilter(self, ...)
+        filterPassAdvanced = nil
+    end
+
+    -- Blizzard announces every change to a result's members with these events.
+    local watcher = CreateFrame('Frame')
+    watcher:RegisterEvent('LFG_LIST_SEARCH_RESULT_UPDATED')
+    watcher:RegisterEvent('LFG_LIST_APPLICATION_STATUS_UPDATED')
+    watcher:SetScript('OnEvent', function(_, _, id)
+        local activity = id and not issecretvalue(id) and LfgService:GetActivity(id)
+        if activity then
+            memberSnapshots[activity] = nil
+        end
+    end)
+end
 
 function BrowsePanel:createSeasonFilter()
     if self.RefreshButton then 
@@ -821,7 +878,7 @@ function checkRemix()
 end    
 local plogin = CreateFrame("Frame", nil, UIParent)
 plogin:RegisterEvent("PLAYER_ENTERING_WORLD")
-plogin:RegisterEvent("ADDON_LOADED")
+-- ADDON_LOADED 每加载一个插件就触发一次，非 Remix 角色会一直重复查光环；登录和进入世界时检查即可
 plogin:RegisterEvent("PLAYER_LOGIN")
 plogin:SetScript("OnEvent",checkRemix)
 
