@@ -6,12 +6,25 @@ local select = select
 
 BuildModule('NetEaseMemorize-1.0')
 
+-- Weak keys never release strings in Lua 5.1, and CheckContent is keyed by every
+-- listing title and comment seen this session: unbounded, it kept them all. The
+-- functions are pure, so a full cache is simply dropped and refilled.
+local NORMAL_LIMIT = 2048
+
 function normal(fn)
+    local count = 0
     local db = setmetatable({}, {
         __mode = 'k',
         __index = function(t, k)
             local v = fn(k)
-            t[k] = v
+            if v ~= nil then
+                if count >= NORMAL_LIMIT then
+                    wipe(t)
+                    count = 0
+                end
+                count = count + 1
+                t[k] = v
+            end
             return v
         end
     })
@@ -25,8 +38,13 @@ function normal(fn)
 
     local function clear()
         wipe(db)
+        count = 0
     end
-    return check, clear
+
+    local function size()
+        return count
+    end
+    return check, clear, size
 end
 
 local function rets(...)

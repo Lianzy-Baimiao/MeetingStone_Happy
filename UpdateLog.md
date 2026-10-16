@@ -1,15 +1,45 @@
+ - **Unreleased / 未发布**
+>**English**  
+>1. "Searching…" after a reload now shows only while a search is really on its way. Before, it stayed up whenever a search was asked for but not sent (window closed, activity list not received yet) until a later search returned; with a saved custom activity it stayed until a manual refresh. Opening the window before the activity list arrives shows "Searching…" and searches as soon as the list arrives; a search asked for while the window was closed runs when it opens.  
+>2. The auto-apply button sits flush left of Refresh (it had a 2 px gap), like the filter buttons on its right and as in Blizzard's group finder.  
+>3. The auto-apply note window can be dragged and reopens where you left it until /reload (nothing is saved). Below "不需要备注可直接选择「无备注开始」" a hint suggests search queries like 10-12.  
+>4. Memory: the title filter cache kept every listing title and comment seen since login (Lua 5.1 weak keys never release strings). 45,000 titles, about three hours of auto-apply, held 7.4 MB; it is now capped at 2,048 entries (0.3 MB).  
+>5. New on-demand commands; nothing runs until you type them. `/ms diag` shows where the "Searching…" time goes (activity list, addon, Blizzard server). `/ms mem` shows resident vs. reclaimable memory and the size of the saved data. `/ms clean` removes, after confirmation, per-character saved data this addon never reads, such as "Locomotive" records left by another MeetingStone build (about 40,000 records and 9 MB loaded at every login on one character we checked).  
+>
+>**中文**  
+>1. 重载后的「搜寻中」只在确实有搜索在进行时显示。此前只要请求过搜索但没有发出（窗口未打开、活动列表尚未收到），它就一直显示到之后某次搜索返回；上次选的是自定义活动时要手动刷新才消失。活动列表到达前打开窗口时显示「搜寻中」，列表一到立即搜索；窗口关闭期间请求的搜索在打开时发出  
+>2. 自动申请按钮紧贴刷新按钮左侧（原有 2 像素间隙），与右侧筛选按钮一致，和暴雪组队工具相同  
+>3. 自动申请备注窗口可拖动，/reload 前再次打开仍在拖动后的位置（不写入存档）；「不需要备注可直接选择「无备注开始」」下方提示可使用 10-12 这样的搜索查询语句  
+>4. 内存：标题过滤缓存会保留登录以来见过的所有队伍标题和说明（Lua 5.1 的弱键表不释放字符串）。4.5 万条（约 3 小时自动申请）占 7.4 MB；现在上限 2048 条（0.3 MB）  
+>5. 新增按需命令，不输入就不运行：`/ms diag` 显示「搜寻中」的时间花在哪里（活动列表、插件、暴雪服务器）；`/ms mem` 显示常驻与可回收内存及存档大小；`/ms clean` 确认后删除本角色存档中本插件不读取的数据，例如其他集合石版本留下的「Locomotive」记录（实测一个角色约 4 万条，每次登录载入约 9 MB）
+
  - **2026-10-17**
->1. 修复活动菜单重建过慢导致的 script ran too long（Gitee II1XDV）：同一帧内缓存 C_LFGList 的查询，一次可用性更新的调用从约 2.1 万次降到约 800 次，菜单内容不变 by 白描  
->2. 修复 ElvUI_WindTools 风格职业图标在集合石列表不生效（Gitee IDKVU4）；调用 WindTools 前先检查搜索结果是否受限 by 白描  
->3. 删除 Cache/Activity.lua 中未使用的混淆代码 by 白描
+>**English**  
+>1. Fixed "script ran too long" from slow activity-menu rebuilds (Gitee II1XDV): C_LFGList answers are cached within a frame, so one availability update makes about 800 calls instead of about 21,000; the menus are unchanged.  
+>2. Fixed ElvUI_WindTools-style role icons not applying in MeetingStone's list (Gitee IDKVU4); restricted search results are checked before calling WindTools.  
+>3. Removed unused obfuscated code from Cache/Activity.lua.  
+>
+>**中文**  
+>1. 修复活动菜单重建过慢导致的 script ran too long（Gitee II1XDV）：同一帧内缓存 C_LFGList 的查询，一次可用性更新的调用从约 2.1 万次降到约 800 次，菜单内容不变  
+>2. 修复 ElvUI_WindTools 风格职业图标在集合石列表不生效（Gitee IDKVU4）；调用 WindTools 前先检查搜索结果是否受限  
+>3. 删除 Cache/Activity.lua 中未使用的混淆代码
 
  - **2026-10-16**
->1. 合并 Tgb 的 PR #7：地下城自动申请、备注、最大等待时间，并修复慢搜索、普通邀请、停止后重申、编辑时撤销等问题。按钮在刷新按钮左侧并与其等高；经典版布局下若遮住「双击加入」「自动进组」，搜索框会自动收窄 by 白描
->2. 修复申请者列表排序比较受限（secret）值导致的报错 by 白描
->3. 同步正式版：说明解析增加受限值防护；AceGUI CheckBox 控件更新到 v27 by 白描
->4. 性能：网易服务遗留的聊天监听按需启用；无活动时不再反复刷新申请者；创建页不再随队伍变化重建界面；去掉空转的定时广播；最近玩友下架计时修复；列表排序键只在内容变化时重建；申请者列表每帧最多重建一次 by 白描
->5. EX 性能：风纪区名单只解码一次、只检查实际存在的队友；Remix 检查不再随每个插件加载重复执行 by 白描
->6. 开源协议由 WTFPL 改为 MIT by 白描
+>**English**  
+>1. Merged Tgb's PR #7: dungeon auto-apply with an application note and a maximum wait time, with fixes for slow searches, party invites, re-applying after stopping and cancelling while editing. The button sits left of Refresh at the same height; in the classic layout the search box narrows when the button would cover the Double-click Join / Auto Join toggles.  
+>2. Fixed an error when the applicant list compared restricted (secret) values while sorting.  
+>3. Synced from the new-UI branch: restricted-value guard in description parsing; AceGUI CheckBox widget updated to v27.  
+>4. Performance: chat listening left over from the NetEase service is installed only when needed; applicants are not refreshed without a listing; the Create tab no longer rebuilds on every group change; removed an idle broadcast timer; fixed the Recent Players delist timer; list sort keys are rebuilt only when the content changes; the applicant list is rebuilt at most once per frame.  
+>5. EX performance: the MysticRemark (风纪区) list is decoded once and only existing party members are checked; the Remix check no longer repeats on every addon load.  
+>6. License changed from WTFPL to MIT.  
+>
+>**中文**  
+>1. 合并 Tgb 的 PR #7：地下城自动申请、备注、最大等待时间，并修复慢搜索、普通邀请、停止后重申、编辑时撤销等问题。按钮在刷新按钮左侧并与其等高；经典版布局下若遮住「双击加入」「自动进组」，搜索框会自动收窄  
+>2. 修复申请者列表排序比较受限（secret）值导致的报错  
+>3. 同步正式版：说明解析增加受限值防护；AceGUI CheckBox 控件更新到 v27  
+>4. 性能：网易服务遗留的聊天监听按需启用；无活动时不再反复刷新申请者；创建页不再随队伍变化重建界面；去掉空转的定时广播；最近玩友下架计时修复；列表排序键只在内容变化时重建；申请者列表每帧最多重建一次  
+>5. EX 性能：风纪区名单只解码一次、只检查实际存在的队友；Remix 检查不再随每个插件加载重复执行  
+>6. 开源协议由 WTFPL 改为 MIT
 
  - **2025-04-28**
 >1. 增加筛选功能使用示例,更新使用说明 by 白描
