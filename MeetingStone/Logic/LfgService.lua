@@ -25,6 +25,8 @@ end
 function LfgService:C_LFGList_Search()
     self.inSearch = true
     self.dirty = true
+    -- /ms diag: when the request left (any caller, ours or Blizzard's).
+    self.searchSentAt = GetTime()
 end
 
 function LfgService:GetActivity(id)
@@ -105,6 +107,7 @@ function LfgService:_CacheActivity(id)
 end
 
 function LfgService:LFG_LIST_SEARCH_RESULTS_RECEIVED(event)
+    local started = debugprofilestop()
     table.wipe(self.activityList)
     table.wipe(self.activityHash)
     table.wipe(self.activityRemoved)
@@ -129,6 +132,11 @@ function LfgService:LFG_LIST_SEARCH_RESULTS_RECEIVED(event)
 
     self:SendMessage('MEETINGSTONE_ACTIVITIES_COUNT_UPDATED', self:GetActivityCount())
     self:SendMessage('MEETINGSTONE_ACTIVITIES_RESULT_RECEIVED', event == 'LFG_LIST_SEARCH_FAILED')
+
+    -- /ms diag: arrival time and the client-side cost of caching the results.
+    self.resultAt = GetTime()
+    self.resultCost = debugprofilestop() - started
+    self.resultFailed = event == 'LFG_LIST_SEARCH_FAILED'
 end
 
 function LfgService:LFG_LIST_SEARCH_RESULT_UPDATED_BUCKET(results)

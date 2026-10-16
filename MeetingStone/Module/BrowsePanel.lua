@@ -941,10 +941,21 @@ function BrowsePanel:OnEnable()
     self:UpdateFilters()
 end
 
-function BrowsePanel:LFG_LIST_AVAILABILITY_UPDATE()
+function BrowsePanel:LFG_LIST_AVAILABILITY_UPDATE(event)
     self.ActivityDropdown:SetMenuTable(GetActivitesMenuTable(ACTIVITY_FILTER_BROWSE))
     self.ActivityDropdown:SetValue(Profile:GetLastSearchCode())
     -- self:Refresh()
+
+    -- /ms diag: the activity list (and so the first search) waits for this event.
+    self.menuBuilds = (self.menuBuilds or 0) + 1
+    if event == 'LFG_LIST_AVAILABILITY_UPDATE' then
+        self.menuReadyAt = self.menuReadyAt or GetTime()
+    end
+    -- A search asked for before the list existed (or while hidden) goes out now,
+    -- unless selecting the saved activity just sent it.
+    if self.searchPending and MainPanel:IsVisible() then
+        self:DoSearch()
+    end
 end
 
 function BrowsePanel:MEETINGSTONE_ACTIVITIES_RESULT_UPDATED()
@@ -1003,22 +1014,36 @@ function BrowsePanel:SignUp(activity)
 end
 
 function BrowsePanel:DoSearch()
+    local searching = self.SearchingBlocker:IsShown()
+    local noResult = self.NoResultBlocker:IsShown()
     self.SearchingBlocker:Show()
     self.NoResultBlocker:Hide()
+    if not self:Search() then
+        -- Nothing was sent (window hidden, inside StartSet, or the activity list has
+        -- not arrived yet). "搜寻中" stays only while a search is really on its way;
+        -- MEETINGSTONE_OPEN / LFG_LIST_AVAILABILITY_UPDATE send the pending one.
+        -- It used to stay up regardless, until some later search returned.
+        self.searchPending = true
+        local waiting = not self.ActivityDropdown:GetMenuTable() and MainPanel:IsVisible()
+        self.SearchingBlocker:SetShown(searching or waiting)
+        self.NoResultBlocker:SetShown(noResult and not waiting)
+        return
+    end
+    self.searchPending = nil
     self.RefreshButton:Disable()
     self.RefreshFilterButton:Disable()
-    self:Search()
     self:CancelTimer(self.disableRefreshTimer)
     --移除3秒的刷新等待时间
     self.disableRefreshTimer = self:ScheduleTimer('OnRefreshTimer', 0)
 end
 
+-- Returns true when a search was sent (now, or earlier in this frame).
 function BrowsePanel:Search()
     if self:InSet() then
         return
     end
     if self.searchedInFrame then
-        return
+        return true
     end
     local activityItem = self.ActivityDropdown:GetItem()
     if not activityItem then
@@ -1040,6 +1065,7 @@ function BrowsePanel:Search()
 
     Profile:SetLastSearchCode(searchCode)
     LfgService:Search(categoryId, baseFilter, activityId)
+    self.searchSerial = (self.searchSerial or 0) + 1
     self:UpdateFilters()
 
     self.searchTimer = nil
@@ -1048,6 +1074,7 @@ function BrowsePanel:Search()
     C_Timer.After(0, function()
         self.searchedInFrame = nil
     end)
+    return true
 end
 
 function BrowsePanel:UpdateFilters()
@@ -1176,7 +1203,13 @@ function BrowsePanel:GetCurrentActivity()
 end
 
 function BrowsePanel:MEETINGSTONE_OPEN()
-    if not LfgService:IsDirty() and self.lastReceived and time() - self.lastReceived < 300 then
+    self.openedAt = GetTime()
+    if not self.menuReadyAt then
+        -- Blizzard's group finder asks on every show; until the first answer the
+        -- activity list (and so the first search) cannot exist.
+        C_LFGList.RequestAvailableActivities()
+    end
+    if not self.searchPending and not LfgService:IsDirty() and self.lastReceived and time() - self.lastReceived < 300 then
         return
     end
     self:DoSearch()
