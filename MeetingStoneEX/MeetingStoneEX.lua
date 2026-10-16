@@ -375,9 +375,6 @@ function BrowsePanel:createSeasonFilter()
         self.RefreshButton:SetPoint('TOPRIGHT', MainPanel, 'TOPRIGHT', -180, -38)
     end
     
-    if self.AdvButton then 
-        self.AdvButton:SetPoint('LEFT', self.RefreshButton, 'RIGHT', 80, 0)
-    end        
     local ExSearchButton = CreateFrame('Button', nil, self, 'UIMenuButtonStretchTemplate')
 
     function btnClick()
@@ -402,6 +399,10 @@ function BrowsePanel:createSeasonFilter()
         ExSearchButton:SetTooltip('过滤器')
         ExSearchButton:SetSize(83, 31)
         ExSearchButton:SetPoint('LEFT', self.RefreshButton, 'RIGHT', 0, 0)
+        -- Flush right of 过滤器, like the classic row (was RefreshButton +80: 3px under it).
+        if self.AdvButton then
+            self.AdvButton:SetPoint('LEFT', ExSearchButton, 'RIGHT', 0, 0)
+        end
         ExSearchButton:SetText('过滤器')
         ExSearchButton:SetNormalFontObject('GameFontNormal')
         ExSearchButton:SetHighlightFontObject('GameFontHighlight')

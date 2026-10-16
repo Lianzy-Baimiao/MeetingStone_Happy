@@ -66,11 +66,23 @@ end
 function Controller:CreateNoteDialog()
     local dialog = CreateFrame('Frame', 'MeetingStoneEXAutoApplyNoteDialog', UIParent, 'BackdropTemplate')
     dialog:Hide()
-    dialog:SetSize(420, 280)
+    -- 20px taller than before the 10-12 hint line, so the note box keeps its gap.
+    dialog:SetSize(420, 300)
     dialog:SetFrameStrata('DIALOG')
     dialog:SetPoint('CENTER', UIParent, 'CENTER')
     dialog:EnableMouse(true)
     dialog.hideOnEscape = true
+    -- Drag by the window background. The engine moves it; nothing runs per frame.
+    dialog:SetMovable(true)
+    dialog:SetClampedToScreen(true)
+    dialog:RegisterForDrag('LeftButton')
+    dialog:SetScript('OnDragStart', function(frame) frame:StartMoving() end)
+    dialog:SetScript('OnDragStop', function(frame)
+        frame:StopMovingOrSizing()
+        -- Remembered for this session only, not in layout-local.txt.
+        frame:SetUserPlaced(false)
+        self.noteDialogPosition = { frame:GetLeft(), frame:GetTop() }
+    end)
     dialog:SetBackdrop({
         bgFile = [[Interface\DialogFrame\UI-DialogBox-Background]],
         edgeFile = [[Interface\DialogFrame\UI-DialogBox-Border]],
@@ -85,6 +97,12 @@ function Controller:CreateNoteDialog()
     message:SetWidth(365)
     message:SetWordWrap(true)
     dialog.Message = message
+    local hint = dialog:CreateFontString(nil, 'ARTWORK', 'GameFontDisableSmall')
+    hint:SetPoint('TOP', message, 'BOTTOM', 0, -6)
+    hint:SetWidth(365)
+    hint:SetWordWrap(true)
+    hint:SetText('提示：可在搜索框输入 10-12 这样的查询语句，筛选对应层数的队伍。')
+    dialog.Hint = hint
 
     local waitLabel = dialog:CreateFontString(nil, 'ARTWORK', 'GameFontHighlight')
     waitLabel:SetPoint('BOTTOMLEFT', 38, 85)
@@ -177,11 +195,18 @@ function Controller:RequestStart()
     description:ClearAllPoints()
     description:SetParent(dialog)
     description:SetSize(340, 48)
-    description:SetPoint('TOP', dialog.Message, 'BOTTOM', 0, -15)
+    description:SetPoint('TOP', dialog.Hint, 'BOTTOM', 0, -12)
     description:Show()
     dialog.Message:SetText('填写一次，本次自动申请都会附带此备注。\n不需要备注可直接选择“无备注开始”。')
     dialog.WaitInput:SetText(tostring(self.maxWaitSeconds))
     StaticPopupSpecial_Show(dialog)
+    -- StaticPopupSpecial_Show anchors popups at the top of the screen; reopen
+    -- where it was last dragged this session instead.
+    local position = self.noteDialogPosition
+    if position then
+        dialog:ClearAllPoints()
+        dialog:SetPoint('TOPLEFT', UIParent, 'BOTTOMLEFT', position[1], position[2])
+    end
     editBox:SetFocus()
 end
 

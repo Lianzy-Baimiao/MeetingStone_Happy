@@ -75,6 +75,12 @@ function CreateFrame(kind, name, parent, template)
     function frame:ClearFocus() self.focused = false end
     function frame:SetScript(event, callback) self.scripts[event] = callback end
     function frame:GetScript(event) return self.scripts[event] end
+    function frame:SetMovable(value) self.movable = value end
+    function frame:SetClampedToScreen(value) self.clamped = value end
+    function frame:RegisterForDrag(button) self.dragButton = button end
+    function frame:StartMoving() self.moving = true end
+    function frame:StopMovingOrSizing() self.moving = false end
+    function frame:SetUserPlaced(value) self.userPlaced = value end
     function frame:IsEnabled() return self.enabled end
     function frame:Enable() self.enabled = true end
     function frame:Disable() self.enabled = false end
@@ -795,14 +801,32 @@ TESTS.update({
 })
 
 TESTS.update({
+    "note popup drags without a per-frame script and reopens where it was dropped": '''
+        local controller = panel.AutoApplyController
+        controller:RequestStart(); local dialog = controller.noteDialog
+        assert(dialog.movable and dialog.clamped and dialog.dragButton == 'LeftButton')
+        assert(dialog.scripts.OnUpdate == nil, 'dragging must not install a per-frame driver')
+        assert(dialog.Hint.text:find('10-12', 1, true), 'search-query hint missing')
+        local desc = LFGListApplicationDialog.Description
+        assert(desc.points[1][2] == dialog.Hint, 'note input should sit below the hint')
+        dialog.scripts.OnDragStart(dialog); assert(dialog.moving)
+        dialog.rect = function() return { left = 300, top = 700, right = 720, bottom = 420 } end
+        dialog.scripts.OnDragStop(dialog)
+        assert(not dialog.moving and dialog.userPlaced == false)
+        dialog:Hide(); controller:RequestStart()
+        local p = dialog.points[1]
+        assert(#dialog.points == 1 and p[1] == 'TOPLEFT' and p[2] == UIParent and p[3] == 'BOTTOMLEFT'
+            and p[4] == 300 and p[5] == 700, 'reopened popup did not keep the dragged position')
+    ''',
     "button copies the refresh template and takes its height from both anchors": '''
         local b, refresh = panel.AutoApplyButton, panel.RefreshButton
         assert(b.kind == 'Button' and b.template == 'UIMenuButtonStretchTemplate' and b.parent == panel)
         assert(b.width == 74 and b.height == nil and #b.points == 2)
         local top, bottom = b.points[1], b.points[2]
-        assert(top[1] == 'TOPRIGHT' and top[2] == refresh and top[3] == 'TOPLEFT' and top[4] == -2 and top[5] == 0)
+        -- Flush like Refresh and the filter buttons next to it (no 2px gap of its own).
+        assert(top[1] == 'TOPRIGHT' and top[2] == refresh and top[3] == 'TOPLEFT' and top[4] == 0 and top[5] == 0)
         assert(bottom[1] == 'BOTTOMRIGHT' and bottom[2] == refresh and bottom[3] == 'BOTTOMLEFT' and
-            bottom[4] == -2 and bottom[5] == 0)
+            bottom[4] == 0 and bottom[5] == 0)
         assert(b.normalFont == 'GameFontNormal' and b.highlightFont == 'GameFontHighlight' and
             b.disabledFont == 'GameFontDisable')
         assert(b:GetText() == '自动申请')
