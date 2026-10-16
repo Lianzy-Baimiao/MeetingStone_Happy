@@ -656,11 +656,67 @@ local function CheckShowIcons(frame)
     end
 end
 
-local function ReplaceGroupRoles(self, numPlayers, _, disabled)
+local function IsInLFGListFrame(frame)
+    while frame do
+        if frame == LFGListFrame then
+            return true
+        end
+        frame = frame:GetParent()
+    end
+    return false
+end
+
+-- WindTools indexes the search result without checking for secret values (12.0) or nil.
+local function IsReadableResult(enumerate)
+    local button = enumerate:GetParent():GetParent()
+    if not button.resultID then
+        return true
+    end
+    local info = C_LFGList.GetSearchResultInfo(button.resultID)
+    if not info or issecretvalue(info) or issecretvalue(info.activityIDs) or not info.activityIDs
+        or issecretvalue(info.activityIDs[1]) or issecretvalue(info.numMembers) then
+        return false
+    end
+    return true
+end
+
+-- Blizzard shows icon.RoleIcon only when classes are shown by role (its own dungeon list);
+-- otherwise the role is drawn on RoleIconWithBackground. WindTools reskins RoleIcon only,
+-- so MeetingStone's rows kept the default icons (issue IDKVU4). Show RoleIcon for the
+-- occupied slots, in Blizzard's order, before WindTools restyles them.
+local function ShowWindRoleIcons(self, numPlayers, displayData, iconOrder, showClassesByRole)
+    if showClassesByRole or iconOrder ~= LFG_LIST_GROUP_DATA_ROLE_ORDER or IsInLFGListFrame(self) then
+        return
+    end
+    local db = WindTools[3].private.WT.misc.lfgList
+    local atlases = LFG_LIST_GROUP_DATA_ATLASES_BORDERLESS
+    if not (db.icon and db.icon.enable and atlases and displayData) then
+        return
+    end
+    local iconIndex = numPlayers
+    for _, role in ipairs(iconOrder) do
+        for _ = 1, displayData[role] or 0 do
+            local icon = self.Icons[iconIndex]
+            if not (icon and icon.RoleIcon and icon.RoleIconWithBackground) then
+                return
+            end
+            icon.RoleIconWithBackground:Hide()
+            icon.RoleIcon:SetAtlas(atlases[role], false)
+            icon.RoleIcon:Show()
+            iconIndex = iconIndex - 1
+        end
+    end
+end
+
+local function ReplaceGroupRoles(self, numPlayers, displayData, disabled, iconOrder, showClassesByRole)
     local flagCheckShowIcons = CheckShowIcons(self)
     if flagCheckShowIcons == "orig" then
         return
     elseif flagCheckShowIcons == "wind" then
+        if not IsReadableResult(self) then
+            return
+        end
+        ShowWindRoleIcons(self, numPlayers, displayData, iconOrder, showClassesByRole)
         return WindTools[1]:GetModule("LFGList"):UpdateEnumerate(self)
     end
 
