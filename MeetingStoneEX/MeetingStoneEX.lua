@@ -93,19 +93,24 @@ if MEETINGSTONE_UI_DB.filters then
     MEETINGSTONE_UI_DB.filters = nil
 end
 
-for i, v in ipairs(MEETINGSTONE_UI_DB.IGNORE_LIST) do
-    if v.leader == nil then
+-- Backwards: table.remove inside ipairs skipped the entry after each removal. A nameless
+-- entry left behind with the same time as another made the sort below error, stopping
+-- the rest of this file.
+for i = #MEETINGSTONE_UI_DB.IGNORE_LIST, 1, -1 do
+    local v = MEETINGSTONE_UI_DB.IGNORE_LIST[i]
+    if type(v) ~= 'table' or v.leader == nil then
         table.remove(MEETINGSTONE_UI_DB.IGNORE_LIST, i)
-    end
-    v.titles = nil
-    if v.time == true then
-        v.time = ''
+    else
+        v.titles = nil
+        if v.time == true then
+            v.time = ''
+        end
     end
 end
 
 table.sort(MEETINGSTONE_UI_DB.IGNORE_LIST, function(a, b)
     if a.time == b.time then
-        return a.leader < b.leader
+        return tostring(a.leader) < tostring(b.leader)
     end
     if type(a.time) == type(b.time) and type(a.time) == 'string' then
         return a.time > b.time

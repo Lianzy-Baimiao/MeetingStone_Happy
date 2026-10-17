@@ -327,6 +327,10 @@ function Addon:CleanUnusedData()
         if not result then
             return
         end
+        -- The dialog can still be answered after combat has started.
+        if InCombatLockdown() then
+            return Say('战斗中不能清理，请脱战后再输入 /ms clean。')
+        end
         collectgarbage('collect')
         local before = AddonMemory()
         for _, k in ipairs(keys) do
