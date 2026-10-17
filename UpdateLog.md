@@ -5,13 +5,17 @@
 >3. The auto-apply note window can be dragged and reopens where you left it until /reload (nothing is saved). Below "不需要备注可直接选择「无备注开始」" a hint suggests search queries like 10-12.  
 >4. Memory: the title filter cache kept every listing title and comment seen since login (Lua 5.1 weak keys never release strings). 45,000 titles, about three hours of auto-apply, held 7.4 MB; it is now capped at 2,048 entries (0.3 MB).  
 >5. New on-demand commands; nothing runs until you type them. `/ms diag` shows where the "Searching…" time goes (activity list, addon, Blizzard server). `/ms mem` shows resident vs. reclaimable memory and the size of the saved data. `/ms clean` removes, after confirmation, per-character saved data this addon never reads, such as "Locomotive" records left by another MeetingStone build (about 40,000 records and 9 MB loaded at every login on one character we checked).  
+>6. With ElvUI (WindTools) or NDui (NDui_Plus), the auto-apply button is styled like Refresh, whether MeetingStone's own 使用Wind皮肤 / 使用NDui皮肤增强 is on or off. With NDui_Plus's own MeetingStone skin and 使用NDui皮肤增强 both on, Refresh, 过滤器, 高级过滤 and the Manage tab's Refresh are no longer reskinned twice; NDui adds a background on every pass, so they had two stacked and no longer matched the buttons beside them.  
+>7. The Refresh countdown sets its label once a second instead of on every frame while the cooldown shows.  
 >
 >**中文**  
 >1. 重载后的「搜寻中」只在确实有搜索在进行时显示。此前只要请求过搜索但没有发出（窗口未打开、活动列表尚未收到），它就一直显示到之后某次搜索返回；上次选的是自定义活动时要手动刷新才消失。活动列表到达前打开窗口时显示「搜寻中」，列表一到立即搜索；窗口关闭期间请求的搜索在打开时发出  
 >2. 自动申请按钮紧贴刷新按钮左侧（原有 2 像素间隙），与右侧筛选按钮一致，和暴雪组队工具相同  
 >3. 自动申请备注窗口可拖动，/reload 前再次打开仍在拖动后的位置（不写入存档）；「不需要备注可直接选择「无备注开始」」下方提示可使用 10-12 这样的搜索查询语句  
 >4. 内存：标题过滤缓存会保留登录以来见过的所有队伍标题和说明（Lua 5.1 的弱键表不释放字符串）。4.5 万条（约 3 小时自动申请）占 7.4 MB；现在上限 2048 条（0.3 MB）  
->5. 新增按需命令，不输入就不运行：`/ms diag` 显示「搜寻中」的时间花在哪里（活动列表、插件、暴雪服务器）；`/ms mem` 显示常驻与可回收内存及存档大小；`/ms clean` 确认后删除本角色存档中本插件不读取的数据，例如其他集合石版本留下的「Locomotive」记录（实测一个角色约 4 万条，每次登录载入约 9 MB）
+>5. 新增按需命令，不输入就不运行：`/ms diag` 显示「搜寻中」的时间花在哪里（活动列表、插件、暴雪服务器）；`/ms mem` 显示常驻与可回收内存及存档大小；`/ms clean` 确认后删除本角色存档中本插件不读取的数据，例如其他集合石版本留下的「Locomotive」记录（实测一个角色约 4 万条，每次登录载入约 9 MB）  
+>6. 装 ElvUI（WindTools）或 NDui（NDui_Plus）时，自动申请按钮与刷新按钮样式一致，不论集合石的「使用Wind皮肤」「使用NDui皮肤增强」开或关。NDui_Plus 自带的集合石皮肤和「使用NDui皮肤增强」同时开启时，刷新、过滤器、高级过滤和管理活动页的刷新不再被美化两次：NDui 每次美化都多加一层背景，叠两层后与旁边的按钮不一致  
+>7. 刷新按钮倒计时每秒更新一次文字，不再每帧设置
 
  - **2026-10-17**
 >**English**  
