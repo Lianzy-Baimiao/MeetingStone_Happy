@@ -25,16 +25,23 @@ end
 -- rebuilds the browse, create and recent menus in the same dispatch, and the version
 -- loop below re-reads every activity of a category once per expansion; uncached that
 -- adds up to tens of thousands of API calls and hit "script ran too long" (issue II1XDV).
+-- Two updates can arrive in one frame: a menu built again within the frame starts a new
+-- cache, so the second update reads fresh answers.
 local lookups = {info = {}, category = {}, group = {}, groups = {}, activities = {}, categories = {}}
 local lookupStamp
+local lookupBuilt = {}
 
-local function Fresh()
+local function Fresh(menuType)
     local now = GetTime()
-    if now ~= lookupStamp then
+    if now ~= lookupStamp or (menuType and lookupBuilt[menuType]) then
         lookupStamp = now
+        wipe(lookupBuilt)
         for _, cache in pairs(lookups) do
             wipe(cache)
         end
+    end
+    if menuType then
+        lookupBuilt[menuType] = true
     end
 end
 
@@ -348,7 +355,7 @@ local function MakeMenuTable(list, baseFilter, menuType)
 end 
 
 function GetActivitesMenuTable(menuType)
-    Fresh()
+    Fresh(menuType)
     currentCodeCache = wipe(activityCodeCaches[menuType])
     wipe(makedCategorys)
     initValidCategorys()
