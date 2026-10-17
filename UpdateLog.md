@@ -1,4 +1,4 @@
- - **Unreleased / 未发布**
+ - **2026-10-17-2**
 >**English**  
 >1. "Searching…" after a reload now shows only while a search is really on its way. Before, it stayed up whenever a search was asked for but not sent (window closed, activity list not received yet) until a later search returned; with a saved custom activity it stayed until a manual refresh. Opening the window before the activity list arrives shows "Searching…" and searches as soon as the list arrives; a search asked for while the window was closed runs when it opens.  
 >2. The auto-apply button sits flush left of Refresh (it had a 2 px gap), like the filter buttons on its right and as in Blizzard's group finder.  
