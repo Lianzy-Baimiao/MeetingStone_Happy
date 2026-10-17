@@ -565,12 +565,20 @@ function BrowsePanel:OnInitialize()
         RefreshButton:HookScript('OnEnable', function(RefreshButton)
             RefreshButton:SetScript('OnUpdate', nil)
             RefreshButton:SetText(REFRESH)
+            RefreshButton.shownSeconds = nil
         end)
         RefreshButton:HookScript('OnDisable', function(RefreshButton)
+            RefreshButton.shownSeconds = nil
             RefreshButton:SetScript('OnUpdate', RefreshButton.OnUpdate)
         end)
         RefreshButton.OnUpdate = function(RefreshButton, elasped)
-            RefreshButton:SetText(format(D_SECONDS, ceil(self:TimeLeft(self.disableRefreshTimer))))
+            -- Runs every frame while the cooldown shows; the label only changes
+            -- once a second, so only set it then.
+            local seconds = ceil(self:TimeLeft(self.disableRefreshTimer))
+            if seconds ~= RefreshButton.shownSeconds then
+                RefreshButton.shownSeconds = seconds
+                RefreshButton:SetText(format(D_SECONDS, seconds))
+            end
         end
     end
 
