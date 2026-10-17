@@ -10,6 +10,7 @@
 >8. New on-demand commands; nothing runs until you type them. `/ms diag` shows where the "Searching…" time goes (activity list, addon, Blizzard server). `/ms mem` shows resident vs. reclaimable memory and the size of the saved data. `/ms clean` removes, after confirmation, per-character saved data this addon never reads, such as "Locomotive" records left by another MeetingStone build (about 40,000 records and 9 MB loaded at every login on one character we checked).  
 >9. With ElvUI (WindTools) or NDui (NDui_Plus), the auto-apply button is styled like Refresh, whether MeetingStone's own 使用Wind皮肤 / 使用NDui皮肤增强 is on or off. With NDui_Plus's own MeetingStone skin and 使用NDui皮肤增强 both on, Refresh, 过滤器, 高级过滤 and the Manage tab's Refresh are no longer reskinned twice; NDui adds a background on every pass, so they had two stacked and no longer matched the buttons beside them.  
 >10. The Refresh countdown sets its label once a second instead of on every frame while the cooldown shows.  
+>11. MeetingStoneEX: blocked-player entries without a player name, for example left by another MeetingStone build, are now removed reliably at login. Two in a row used to leave one behind; when it had the same time as another entry, sorting the block list failed and the rest of MeetingStoneEX's main file did not load.  
 >
 >**中文**  
 >1. 修复活动菜单重建过慢导致的 script ran too long（Gitee II1XDV）：每次可用性更新内缓存 C_LFGList 的查询，一次更新的调用从约 2.1 万次降到约 800 次，菜单内容不变  
@@ -21,7 +22,8 @@
 >7. 内存：标题过滤缓存会保留登录以来见过的所有队伍标题和说明（Lua 5.1 的弱键表不释放字符串）。4.5 万条（约 3 小时自动申请）占 7.4 MB；现在上限 2048 条（0.3 MB）  
 >8. 新增按需命令，不输入就不运行：`/ms diag` 显示「搜寻中」的时间花在哪里（活动列表、插件、暴雪服务器）；`/ms mem` 显示常驻与可回收内存及存档大小；`/ms clean` 确认后删除本角色存档中本插件不读取的数据，例如其他集合石版本留下的「Locomotive」记录（实测一个角色约 4 万条，每次登录载入约 9 MB）  
 >9. 装 ElvUI（WindTools）或 NDui（NDui_Plus）时，自动申请按钮与刷新按钮样式一致，不论集合石的「使用Wind皮肤」「使用NDui皮肤增强」开或关。NDui_Plus 自带的集合石皮肤和「使用NDui皮肤增强」同时开启时，刷新、过滤器、高级过滤和管理活动页的刷新不再被美化两次：NDui 每次美化都多加一层背景，叠两层后与旁边的按钮不一致  
->10. 刷新按钮倒计时每秒更新一次文字，不再每帧设置
+>10. 刷新按钮倒计时每秒更新一次文字，不再每帧设置  
+>11. MeetingStoneEX：登录时可靠地清除屏蔽列表中没有玩家名的条目（例如其他集合石版本留下的）。原来两条相邻时会漏掉一条；它与其他条目时间相同时，排序屏蔽列表会出错，MeetingStoneEX 主文件后面的部分不会载入
 
  - **2026-10-16**
 >**English**  
