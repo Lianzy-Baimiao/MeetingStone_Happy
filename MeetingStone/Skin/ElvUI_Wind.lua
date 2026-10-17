@@ -232,6 +232,13 @@ local function defaultcvar()
               BrowsePanel.ExSearchButton.backdrop:ClearAllPoints()
               BrowsePanel.ExSearchButton.backdrop:SetOutside(BrowsePanel.ExSearchButton, -1, -1)
           end
+
+          -- Meeting Stone EX element (自动申请): same template as Refresh, same skin
+          if BrowsePanel.AutoApplyButton then
+              S:Proxy("HandleButton", BrowsePanel.AutoApplyButton, nil, nil, nil, true, "Transparent")
+              BrowsePanel.AutoApplyButton.backdrop:ClearAllPoints()
+              BrowsePanel.AutoApplyButton.backdrop:SetOutside(BrowsePanel.AutoApplyButton, -1, -1)
+          end
           
           -- Advanced Filter (高级过滤)
           if BrowsePanel.AdvButton then
@@ -506,14 +513,34 @@ local function defaultcvar()
   
 end
 
+-- WindTools' own MeetingStone skin (when 使用Wind皮肤 is off) styles RefreshButton
+-- but does not know MeetingStoneEX's auto-apply button. Give it the same
+-- treatment, after WindTools' callback for MeetingStone has run.
+local function FollowWindToolsRefresh()
+    local W, F, E, L = unpack(_G.WindTools)
+    local S = W.Modules.Skins
+    S:AddCallbackForAddon("MeetingStone", function()
+        local BrowsePanel = Addon:GetModule("BrowsePanel", true)
+        local refresh = BrowsePanel and BrowsePanel.RefreshButton
+        local button = BrowsePanel and BrowsePanel.AutoApplyButton
+        if not (button and refresh and refresh.backdrop) then return end
+        S:Proxy("HandleButton", button, nil, nil, nil, true)
+        button.backdrop:ClearAllPoints()
+        button.backdrop:SetOutside(button, -1, -1)
+    end)
+end
+
 local once = true
 local frame = CreateFrame("FRAME", "defaultcvar") 
 frame:RegisterEvent("ADDON_LOADED") 
 local function eventHandler(self, event, addOnName)
-    local useWindSkin = Profile:GetUseWindSkin()
-    if once and IsAddOnLoaded("ElvUI_WindTools") and IsAddOnLoaded("MeetingStone") and useWindSkin then
-        defaultcvar()
+    if once and IsAddOnLoaded("ElvUI_WindTools") and IsAddOnLoaded("MeetingStone") then
         once = false
+        if Profile:GetUseWindSkin() then
+            defaultcvar()
+        else
+            FollowWindToolsRefresh()
+        end
     end
 end 
 frame:SetScript("OnEvent", eventHandler)

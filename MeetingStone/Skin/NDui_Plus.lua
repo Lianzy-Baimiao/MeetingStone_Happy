@@ -44,7 +44,13 @@ local function defaultcvar()
     
     local function reskinStretchButton(bu)
         bu:SetHeight(28)
-        B.Reskin(bu)
+        -- NDui_Plus's own MeetingStone skin may have reskinned it already.
+        -- B.Reskin adds a background frame on every call, so a second pass
+        -- stacks a second one: Refresh came out darker than the buttons
+        -- beside it.
+        if not bu.__bg then
+            B.Reskin(bu)
+        end
         bu.styled = true
     end
     
@@ -624,6 +630,13 @@ local function defaultcvar()
                 if ExSearchButton then
                     reskinStretchButton(ExSearchButton)
                 end
+
+                -- 自动申请: same template as RefreshButton and anchored to its
+                -- top and bottom, so it keeps Refresh's reskinned height.
+                local AutoApplyButton = BrowsePanel.AutoApplyButton
+                if AutoApplyButton then
+                    reskinStretchButton(AutoApplyButton)
+                end
     
                 local BlzFilterPanel = BrowsePanel.BlzFilterPanel
                 if BlzFilterPanel then
@@ -712,14 +725,34 @@ local function defaultcvar()
   
 end
 
+-- NDui_Plus's own MeetingStone skin (when 使用NDui皮肤增强 is off) reskins
+-- RefreshButton, AdvButton and ExSearchButton, not MeetingStoneEX's auto-apply
+-- button. Style it like them, after NDui_Plus's callback for MeetingStone has run.
+local function FollowNDuiPlusRefresh()
+    local B, C, L, DB, P = unpack(_G.NDui_Plus)
+    local S = P:GetModule("Skins")
+    S:RegisterSkin("MeetingStone", function()
+        local BrowsePanel = Addon:GetModule("BrowsePanel", true)
+        local refresh = BrowsePanel and BrowsePanel.RefreshButton
+        local button = BrowsePanel and BrowsePanel.AutoApplyButton
+        if not (button and refresh and refresh.__bg) or button.__bg then return end
+        button:SetHeight(28)
+        B.Reskin(button)
+        button.styled = true
+    end)
+end
+
 local once = true
 local frame = CreateFrame("FRAME", "defaultcvar") 
 frame:RegisterEvent("ADDON_LOADED") 
 local function eventHandler(self, event, addOnName)
-    local useNDuiSkin = Profile:GetUseNDuiSkin()
-    if once and IsAddOnLoaded("NDui_Plus") and IsAddOnLoaded("MeetingStone") and useNDuiSkin then
-        defaultcvar()
+    if once and IsAddOnLoaded("NDui_Plus") and IsAddOnLoaded("MeetingStone") then
         once = false
+        if Profile:GetUseNDuiSkin() then
+            defaultcvar()
+        else
+            FollowNDuiPlusRefresh()
+        end
     end
 end 
 frame:SetScript("OnEvent", eventHandler)
