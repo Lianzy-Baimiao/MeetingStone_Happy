@@ -462,10 +462,13 @@ function MainPanel:OpenActivityTooltip(activity, tooltip)
         tooltip:AddLine(string.format(LFG_LIST_TOOLTIP_MEMBERS_SIMPLE, activity:GetNumMembers()))
         for i = 1, activity:GetNumMembers() do
             local role, class, classLocalized, specLocalized = LfgService:GetSearchResultMemberInfo(activity:GetID(), i)
-            local classColor                                 = RAID_CLASS_COLORS[class] or NORMAL_FONT_COLOR
-            tooltip:AddLine(string.format(LFG_LIST_TOOLTIP_CLASS_ROLE, classLocalized, specLocalized or _G[role]),
-                classColor.r,
-                classColor.g, classColor.b)
+            -- Unknown member (left the group, or restricted in combat): no line.
+            if class then
+                local classColor                             = RAID_CLASS_COLORS[class] or NORMAL_FONT_COLOR
+                tooltip:AddLine(string.format(LFG_LIST_TOOLTIP_CLASS_ROLE, classLocalized, specLocalized or _G[role]),
+                    classColor.r,
+                    classColor.g, classColor.b)
+            end
         end
     else
         -- Modification begin

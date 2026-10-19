@@ -59,7 +59,13 @@ function CreatePanel:OnInitialize()
         summaryLabel:SetAllPoints(summary)
         summaryLabel:SetJustifyV('TOP')
         summary:SetScript('OnEnter', function(summary)
-            if (summaryLabel:GetStringWidth() or 0) > summaryLabel:GetWidth() then
+            -- Text from a restricted listing (combat, 12.x) makes the label's sizes secret;
+            -- they cannot be compared, so no tooltip then.
+            local textWidth, width = summaryLabel:GetStringWidth(), summaryLabel:GetWidth()
+            if issecretvalue(textWidth) or issecretvalue(width) then
+                return
+            end
+            if (textWidth or 0) > width then
                 GameTooltip:SetOwner(summary, 'ANCHOR_RIGHT')
                 GameTooltip:SetText(title:GetText() or '')
                 GameTooltip:AddLine(summaryLabel:GetText() or '', GRAY_FONT_COLOR.r, GRAY_FONT_COLOR.g, GRAY_FONT_COLOR.b, true)
@@ -720,6 +726,14 @@ function CreatePanel:ClearAllContent()
     self.CrossFactionGroup:SetChecked(true)
 end
 
+-- In a boss fight, a Mythic+ key or a rated match (chat lockdown, 12.x) the listing's
+-- settings are secret. The dropdown, input boxes and check boxes cannot take them.
+local function HasSecretSettings(activity)
+    return issecretvalue(activity:GetGeneralPlaystyle()) or issecretvalue(activity:GetItemLevel())
+        or issecretvalue(activity:GetMythicPlusRating()) or issecretvalue(activity:GetPvpRating())
+        or issecretvalue(activity:GetPrivateGroup()) or issecretvalue(activity:GetCrossFactionGroup())
+end
+
 function CreatePanel:UpdateActivity()
     if not self.CreateWidget:IsVisible() then
         return
@@ -728,8 +742,12 @@ function CreatePanel:UpdateActivity()
     local activity = self:GetCurrentActivity()
     if not activity then
         return
-    end 
+    end
     self.ActivityType:SetValue(activity:GetCode())
+    -- Keep the last values; the next update after the restriction fills them.
+    if HasSecretSettings(activity) then
+        return
+    end
     self.GeneralPlaystyle:SetValue(activity:GetGeneralPlaystyle())
     self.ItemLevel:SetText(activity:GetItemLevel())
     --self.HonorLevel:SetText(activity:GetHonorLevel() or '')
@@ -760,7 +778,10 @@ function CreatePanel:UpdateActivityView()
     self.MiscWidget.ItemLevel:SetText(activity:GetItemLevel())
     --self.MiscWidget.Level:SetText(minLevel == maxLevel and minLevel or isMax and '≥' .. minLevel or minLevel .. '-' .. maxLevel)
 
-    if activity:GetPrivateGroup() then
+    -- Secret in a boss fight, a Mythic+ key or a rated match (12.x); a secret
+    -- boolean cannot be tested, so the label stays hidden until it is readable.
+    local privateGroup = activity:GetPrivateGroup()
+    if not issecretvalue(privateGroup) and privateGroup then
         self.InfoWidget.PrivateGroup:Show()
     else
         self.InfoWidget.PrivateGroup:Hide()
