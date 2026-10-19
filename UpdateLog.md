@@ -1,3 +1,16 @@
+ - **Unreleased / 未发布**
+>**English**  
+>1. Fixed errors in a boss fight, a Mythic+ key or a rated match, where Blizzard restricts group details (secret values): Manage view, description tooltip, list tooltip, leader class color and class/spec icons. Restricted members are left out; Blizzard's role icons still show.  
+>2. While the listing's settings are restricted, the Manage view keeps its last values instead of erroring.  
+>3. Menus no longer cause ADDON_ACTION_BLOCKED (SetPropagateKeyboardInput) in combat and never hold back keys in combat; out of combat ESC still only closes the open menu.  
+>4. MeetingStoneEX: the role and class filters treat restricted members as unknown instead of erroring.  
+>
+>**中文**  
+>1. 修复首领战、大秘境和评级战场/竞技场中暴雪限制队伍信息（secret 值）时的报错：管理活动、说明提示、列表提示、队长职业颜色、职业/专精图标。受限的队员不显示，暴雪自带的职责图标照常显示  
+>2. 活动设置受限时，管理活动保留上次的值，不再报错  
+>3. 菜单在战斗中不再触发 ADDON_ACTION_BLOCKED（SetPropagateKeyboardInput），战斗中也不会吞掉按键；非战斗时 ESC 仍只关闭打开的菜单  
+>4. MeetingStoneEX：职责、职业过滤把受限的队员当作未知，不再报错
+
  - **2026-10-17**
 >**English**  
 >1. Fixed "script ran too long" from slow activity-menu rebuilds (Gitee II1XDV): C_LFGList answers are cached for each availability update, so one update makes about 800 calls instead of about 21,000; the menus are unchanged.  

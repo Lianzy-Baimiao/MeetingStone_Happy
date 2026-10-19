@@ -12,18 +12,32 @@ LibStub('AceTimer-3.0'):Embed(AutoHideController)
 AutoHideController._Objects = AutoHideController._Objects or {}
 AutoHideController.ESCHandler = AutoHideController.ESCHandler or CreateFrame('Frame', nil, UIParent)
 AutoHideController.ESCHandler:Hide()
-AutoHideController.ESCHandler:SetScript('OnKeyDown', function(self, key)
-    local found = false
-    if key == GetBindingKey('TOGGLEGAMEMENU') then
-        for object in pairs(AutoHideController._Objects) do
-            if object:IsVisible() then
-                object:OnTimer()
-                found = true
-            end
-        end
-        self:Hide()
+
+-- SetPropagateKeyboardInput is blocked in combat (ADDON_ACTION_BLOCKED). Keys pass
+-- through by default; only ESC that closes a menu out of combat is kept from the game.
+local function PassKeys(frame)
+    if not InCombatLockdown() and not frame:GetPropagateKeyboardInput() then
+        frame:SetPropagateKeyboardInput(true)
     end
-    self:SetPropagateKeyboardInput(not found)
+end
+
+PassKeys(AutoHideController.ESCHandler)
+AutoHideController.ESCHandler:SetScript('OnShow', PassKeys)
+AutoHideController.ESCHandler:SetScript('OnKeyDown', function(self, key)
+    if key ~= GetBindingKey('TOGGLEGAMEMENU') then
+        return
+    end
+    local found = false
+    for object in pairs(AutoHideController._Objects) do
+        if object:IsVisible() then
+            object:OnTimer()
+            found = true
+        end
+    end
+    self:Hide()
+    if found and not InCombatLockdown() then
+        self:SetPropagateKeyboardInput(false)
+    end
 end)
 
 
@@ -76,6 +90,11 @@ function AutoHideController:OnTimer()
 end
 
 function AutoHideController:OnShow()
+    -- In combat the handler cannot let keys through again; while it would keep
+    -- them, leave it hidden (ESC then reaches the game, the menu still auto-hides).
+    if InCombatLockdown() and not self.ESCHandler:GetPropagateKeyboardInput() then
+        return
+    end
     self.ESCHandler:Show()
 end
 

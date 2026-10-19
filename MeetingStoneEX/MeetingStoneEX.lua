@@ -8,12 +8,18 @@ debug = IsAddOnLoaded('!!!!!tdDevTools') and print or nop
 Addon = LibStub('AceAddon-3.0'):GetAddon('MeetingStone')
 GUI = LibStub('NetEaseGUI-2.0')
 
+-- Same as LfgService:GetSearchResultMemberInfo: secret fields (boss fight, Mythic+
+-- key, rated match; 12.x) cannot be compared or used as keys, so the member is unknown.
 function GetSearchResultMemberInfo(...)
     local info = C_LFGList.GetSearchResultPlayerInfo(...)
-	if (info) then
-		return info.assignedRole, info.classFilename, info.className, info.specName, info.isLeader;
+	if (info) and not issecretvalue(info) then
+		local role, class, classLocalized, spec, isLeader = info.assignedRole, info.classFilename, info.className, info.specName, info.isLeader
+		if issecretvalue(role) or issecretvalue(class) or issecretvalue(classLocalized) or issecretvalue(spec) or issecretvalue(isLeader) then
+			return
+		end
+		return role, class, classLocalized, spec, isLeader;
 	end
-end    
+end
 
 --当前版本的地下城副本
 -- ACTIVITY_NAMES = {
