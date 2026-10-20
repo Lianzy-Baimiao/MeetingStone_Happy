@@ -478,14 +478,16 @@ function MainPanel:OpenActivityTooltip(activity, tooltip)
         for i = 1, activity:GetNumMembers() do
             local role, class, classLocalized, specLocalized = LfgService:GetSearchResultMemberInfo(activity:GetID(), i)
             if (class) then
-                classInfo[class .. specLocalized] = {
+                -- The game may give no spec name (specName is nilable); list the class alone then.
+                local classAndSpec = class .. (specLocalized or '')
+                classInfo[classAndSpec] = {
                     name = classLocalized,
                     color = RAID_CLASS_COLORS[class] or NORMAL_FONT_COLOR,
                     spec = specLocalized
                 }
                 if not roles[role] then roles[role] = {} end
-                if not roles[role][class .. specLocalized] then roles[role][class .. specLocalized] = 0 end
-                roles[role][class .. specLocalized] = roles[role][class .. specLocalized] + 1
+                if not roles[role][classAndSpec] then roles[role][classAndSpec] = 0 end
+                roles[role][classAndSpec] = roles[role][classAndSpec] + 1
             end
         end
 
@@ -497,7 +499,8 @@ function MainPanel:OpenActivityTooltip(activity, tooltip)
                 text = text ..
                     "|c" ..
                     classInfo[classAndspec].color.colorStr ..
-                    classInfo[classAndspec].name .. " - " .. classInfo[classAndspec].spec .. "|r "
+                    classInfo[classAndspec].name ..
+                    (classInfo[classAndspec].spec and " - " .. classInfo[classAndspec].spec or "") .. "|r "
                 tooltip:AddLine(text)
             end
         end

@@ -791,7 +791,7 @@ function CreatePanel:UpdateActivityView()
         -- local fullName, shortName, categoryID, groupID, iLevel, filters, minLevel, maxPlayers, displayType = C_LFGList.GetActivityInfo(activity:GetActivityID())
 		
 		local activityInfo = C_LFGList.GetActivityInfoTable(activity:GetActivityID());
-		local categoryId = activityInfo.categoryID;
+		local categoryID = activityInfo.categoryID;
 		local filters = activityInfo.filters;
 		
         --local _, separateRecommended = C_LFGList.GetCategoryInfo(categoryID)
@@ -800,17 +800,18 @@ function CreatePanel:UpdateActivityView()
 		local separateRecommended
 		if categoryID then
 			local categoryInfo = C_LFGList.GetLfgCategoryInfo(categoryID);
-			separateRecommended = categoryInfo.separateRecommended
+			separateRecommended = categoryInfo and categoryInfo.separateRecommended
 		end
 		
 		if separateRecommended and bit.band(filters, Enum.LFGListFilter.Recommended) ~= 0 then
-			atlasName = 'groupfinder-background-'..(LFG_LIST_CATEGORY_TEXTURES[categoryID] or 'raids')..'-'..LFG_LIST_PER_EXPANSION_TEXTURES[LFGListUtil_GetCurrentExpansion()]
+			atlasName = 'groupfinder-background-'..(LFG_LIST_CATEGORY_TEXTURES[categoryID] or 'raids')..'-'..(LFG_LIST_PER_EXPANSION_TEXTURES[LFGListUtil_GetCurrentExpansion()] or 'classic')
 		elseif separateRecommended and bit.band(filters, Enum.LFGListFilter.NotRecommended) ~= 0 then
-			atlasName = 'groupfinder-background-'..(LFG_LIST_CATEGORY_TEXTURES[categoryID] or 'raids')..'-'..LFG_LIST_PER_EXPANSION_TEXTURES[math.max(0,LFGListUtil_GetCurrentExpansion() - 1)]
+			atlasName = 'groupfinder-background-'..(LFG_LIST_CATEGORY_TEXTURES[categoryID] or 'raids')..'-'..(LFG_LIST_PER_EXPANSION_TEXTURES[math.max(0,LFGListUtil_GetCurrentExpansion() - 1)] or 'classic')
 		else
 			atlasName = 'groupfinder-background-'..(LFG_LIST_CATEGORY_TEXTURES[categoryID] or 'questing')
 		end
 
+        suffix = ''
         if bit.band(filters, Enum.LFGListFilter.PvE) ~= 0 then
             suffix = '-pve'
         elseif bit.band(filters, Enum.LFGListFilter.PvP) ~= 0 then
@@ -818,9 +819,11 @@ function CreatePanel:UpdateActivityView()
         end
     end
 
-    if not self.InfoWidget.Background:SetAtlas(atlasName..suffix, true) then
-        self.InfoWidget.Background:SetAtlas(atlasName, true)
+    -- Picked as in Blizzard's own panel: with the suffix if the game has that image.
+    if C_Texture.GetAtlasInfo(atlasName..suffix) then
+        atlasName = atlasName..suffix
     end
+    self.InfoWidget.Background:SetAtlas(atlasName, true)
 end
 
 function CreatePanel:GetCurrentActivity()
