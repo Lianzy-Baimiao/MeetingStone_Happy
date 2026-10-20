@@ -3,11 +3,15 @@
 >1. Fixed errors in a boss fight, a Mythic+ key or a rated match, where Blizzard restricts group details (secret values): Manage view, description tooltip, list tooltip, leader class color and class/spec icons. Restricted members are left out; Blizzard's role icons still show.  
 >2. While the listing's settings are restricted, the Manage view keeps its last values instead of erroring.  
 >3. Menus no longer cause ADDON_ACTION_BLOCKED (SetPropagateKeyboardInput) in combat and never hold back keys in combat; out of combat ESC still only closes the open menu.  
+>4. The Manage view background now matches the listing's activity (dungeon, raid, arena, custom and so on), as in Blizzard's own panel, instead of always the questing image.  
+>5. The list tooltip's members by role no longer error on a member without a spec name; the class alone is shown.  
 >
 >**中文**  
 >1. 修复首领战、大秘境和评级战场/竞技场中暴雪限制队伍信息（secret 值）时的报错：管理活动、说明提示、列表提示、队长职业颜色、职业/专精图标。受限的队员不显示，暴雪自带的职责图标照常显示  
 >2. 活动设置受限时，管理活动保留上次的值，不再报错  
->3. 菜单在战斗中不再触发 ADDON_ACTION_BLOCKED（SetPropagateKeyboardInput），战斗中也不会吞掉按键；非战斗时 ESC 仍只关闭打开的菜单
+>3. 菜单在战斗中不再触发 ADDON_ACTION_BLOCKED（SetPropagateKeyboardInput），战斗中也不会吞掉按键；非战斗时 ESC 仍只关闭打开的菜单  
+>4. 管理活动的背景图按活动类型显示（地下城、团队副本、竞技场、自定义等），和暴雪自带面板一致，不再总是任务背景  
+>5. 列表提示中按职责列出的队员，缺少专精名时不再报错，只显示职业
 
  - **2026-10-17**
 >**English**  
