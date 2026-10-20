@@ -35,7 +35,6 @@ function Profile:OnInitialize()
             showWindClassIco  = false,
             useWindSkin       = true,
             useNDuiSkin       = true,
-            enableRaiderIO    = true,
             enableLeaderColor = true,
             filters           = {},
         },
@@ -206,9 +205,9 @@ function Profile:GetUseNDuiSkin()
     return self:GetGlobalOption('useNDuiSkin')
 end
 
+-- The Raider.IO option is gone; kept for any addon that still asks.
 function Profile:GetEnableRaiderIO()
-    local region = GetPlayerRegion()
-    return self:GetGlobalOption('enableRaiderIO') and region ~= "CN"
+    return false
 end
 
 function Profile:GetEnableLeaderColor()

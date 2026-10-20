@@ -732,6 +732,12 @@ function lfgMSGfunc(data, event, resultid, status, prevstatus, title)
     
     local info = C_LFGList.GetSearchResultInfo(resultid)
     local activityID = nil
+    -- Gone results return nothing; while Blizzard restricts group details (12.x: boss
+    -- fight, Mythic+ key, rated match) the activity IDs are secret and cannot be tested
+    -- or passed to GetActivityFullName. No notice either way.
+    if not info or issecretvalue(info.activityIDs) or issecretvalue(info.activityIDs[1]) then
+        return false
+    end
     for _, v in pairs (info.activityIDs) do
         activityID = v
         break

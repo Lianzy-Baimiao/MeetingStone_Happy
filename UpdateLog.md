@@ -7,9 +7,11 @@
 >5. The Manage view background now matches the listing's activity (dungeon, raid, arena, custom and so on), as in Blizzard's own panel, instead of always the questing image.  
 >6. The list tooltip's members by role no longer error on a member without a spec name; the class alone is shown.  
 >7. "Ignore Player" in the applicant right-click menu works again: it ignores the player and declines the application, as Blizzard's own menu does, instead of erroring.  
->8. The applicant tooltip no longer errors outside China with Raider.IO installed; MeetingStone's own Raider.IO lines stay off as they have been since 11.0.2.  
+>8. Removed the "Show Raider.IO data" option. MeetingStone's own Raider.IO lines had been off in China since 11.0 and everywhere since 11.0.2; outside China with Raider.IO installed it only made the applicant tooltip error. Mythic+ scores come from Blizzard and still show.  
 >9. With the old RaidBuilder addon enabled, MeetingStone disables it and shows its warning instead of erroring at login.  
 >10. Opening the main window no longer errors when saved data from the old NetEase service still marks an announcement unread.  
+>11. MeetingStoneEX: accepting an invite while Blizzard restricts group details, or after the group's listing is gone, no longer errors; the "队伍详情" chat line is skipped then.  
+>12. Updating a listing while its settings are restricted no longer passes the restricted auto-accept flag to Blizzard, which accepts it only from its own code; auto-accept is sent off, as on every listing MeetingStone creates.  
 >
 >**中文**  
 >1. 修复首领战、大秘境和评级战场/竞技场中暴雪限制队伍信息（secret 值）时的报错：管理活动、说明提示、列表提示、队长职业颜色、职业/专精图标。受限的队员不显示，暴雪自带的职责图标照常显示  
@@ -19,9 +21,11 @@
 >5. 管理活动的背景图按活动类型显示（地下城、团队副本、竞技场、自定义等），和暴雪自带面板一致，不再总是任务背景  
 >6. 列表提示中按职责列出的队员，缺少专精名时不再报错，只显示职业  
 >7. 申请者右键菜单的「屏蔽玩家」恢复：与暴雪自带菜单一样屏蔽该玩家并拒绝申请，不再报错  
->8. 非国服装了 Raider.IO 时申请者提示不再报错；集合石自带的 Raider.IO 信息自 11.0.2 起就已关闭，仍不显示  
+>8. 移除「显示RaiderIO数据」选项。集合石自带的 Raider.IO 信息国服自 11.0、其他地区自 11.0.2 起就不再显示；非国服装了 Raider.IO 时，它只会让申请者提示报错。大秘评分来自暴雪，照常显示  
 >9. 启用了老版本 RaidBuilder 时，登录不再报错，改为禁用它并弹出提示  
->10. 旧网易服务存档里留有未读公告时，打开主窗口不再报错
+>10. 旧网易服务存档里留有未读公告时，打开主窗口不再报错  
+>11. MeetingStoneEX：在暴雪限制队伍信息时、或队伍已不在列表中时接受邀请，不再报错；此时不显示「队伍详情」聊天提示  
+>12. 活动设置受限时更新活动，不再把受限的「自动接受」标记传给暴雪接口（这类值暴雪只接受它自己的代码传入），改为按关闭发送，与集合石创建的活动一致
 
  - **2026-10-17**
 >**English**  

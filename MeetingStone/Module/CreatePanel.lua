@@ -697,6 +697,12 @@ function CreatePanel:Create(activity, isSelf)
     local isCreated = self:IsActivityCreated()
     local handler = isCreated and C_LFGList.UpdateListing or C_LFGList.CreateListing
     local autoAccept = C_LFGList:HasActiveEntryInfo() and C_LFGList.GetActiveEntryInfo().autoAccept
+    -- While the listing's settings are restricted (12.x: boss fight, Mythic+ key, rated
+    -- match) this flag is secret, and UpdateListing takes secrets only from untainted
+    -- (Blizzard) code. Send it off, as on every listing MeetingStone creates.
+    if issecretvalue(autoAccept) then
+        autoAccept = false
+    end
 
     if handler(activity:GetCreateArguments(autoAccept)) then
         if isSelf then
