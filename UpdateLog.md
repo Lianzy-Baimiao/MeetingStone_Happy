@@ -1,4 +1,4 @@
- - **Unreleased / 未发布**
+ - **2026-10-21**
 >**English**  
 >1. Fixed errors in a boss fight, a Mythic+ key or a rated match, where Blizzard restricts group details (secret values): Manage view, description tooltip, list tooltip, leader class color and class/spec icons. Restricted members are left out; Blizzard's role icons still show.  
 >2. While the listing's settings are restricted, the Manage view keeps its last values instead of erroring.  
