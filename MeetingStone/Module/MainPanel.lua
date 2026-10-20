@@ -547,10 +547,6 @@ function MainPanel:OpenActivityTooltip(activity, tooltip)
         tooltip:AddDoubleLine(' ', GetFullVersion(version), 1, 1, 1, 0.5, 0.5, 0.5)
     end
 
-    -- if RaiderIO and RaiderIO.GetProfile and Profile:GetEnableRaiderIO() then
-    --     RaiderIOService:appendRaiderIOData(activity:GetLeader(), activity:GetLeaderScore(), tooltip)
-    -- end
-
     --[=[@debug@
     if activity:IsMeetingStone() then
         local source = activity:GetSource() or 1
@@ -663,11 +659,6 @@ function MainPanel:OpenApplicantTooltip(applicant)
         for i, v in ipairs(progressions) do
             GameTooltip:AddDoubleLine(v.name, GetProgressionTex(progressionValue, i), 1, 1, 1)
         end
-    end
-
-    -- Logic/RaiderIO.lua is commented out of Logic.xml, so RaiderIOService is nil.
-    if RaiderIOService and RaiderIO and RaiderIO.GetProfile and Profile:GetEnableRaiderIO() then
-        RaiderIOService:appendRaiderIOData(applicant:GetName(), applicant:GetDungeonScore(), GameTooltip)
     end
 
     GameTooltip:Show()

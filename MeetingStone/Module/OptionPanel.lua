@@ -35,7 +35,6 @@ function SettingPanel:OnInitialize()
         ['showWindClassIco']  = true,
         ['useWindSkin']       = true,
         ['useNDuiSkin']       = true,
-        ['enableRaiderIO']    = true,
         ['enableLeaderColor'] = true,
         ['globalPanelPos']    = true
     }
@@ -162,15 +161,6 @@ function SettingPanel:OnInitialize()
                 name = L['显示队长职业颜色'],
                 width = 'full',
                 order = order(),
-            },
-            enableRaiderIO = {
-                type = 'toggle',
-                name = L['显示RaiderIO数据'],
-                width = 'full',
-                order = order(),
-                hidden = function()
-                    return not RaiderIO
-                end,
             },
             -- 增加wind职业图标设置选项
             showWindClassIco = {
