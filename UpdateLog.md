@@ -5,13 +5,21 @@
 >3. Menus no longer cause ADDON_ACTION_BLOCKED (SetPropagateKeyboardInput) in combat and never hold back keys in combat; out of combat ESC still only closes the open menu.  
 >4. The Manage view background now matches the listing's activity (dungeon, raid, arena, custom and so on), as in Blizzard's own panel, instead of always the questing image.  
 >5. The list tooltip's members by role no longer error on a member without a spec name; the class alone is shown.  
+>6. "Ignore Player" in the applicant right-click menu works again: it ignores the player and declines the application, as Blizzard's own menu does, instead of erroring.  
+>7. The applicant tooltip no longer errors outside China with Raider.IO installed; MeetingStone's own Raider.IO lines stay off as they have been since 11.0.2.  
+>8. With the old RaidBuilder addon enabled, MeetingStone disables it and shows its warning instead of erroring at login.  
+>9. Opening the main window no longer errors when saved data from the old NetEase service still marks an announcement unread.  
 >
 >**中文**  
 >1. 修复首领战、大秘境和评级战场/竞技场中暴雪限制队伍信息（secret 值）时的报错：管理活动、说明提示、列表提示、队长职业颜色、职业/专精图标。受限的队员不显示，暴雪自带的职责图标照常显示  
 >2. 活动设置受限时，管理活动保留上次的值，不再报错  
 >3. 菜单在战斗中不再触发 ADDON_ACTION_BLOCKED（SetPropagateKeyboardInput），战斗中也不会吞掉按键；非战斗时 ESC 仍只关闭打开的菜单  
 >4. 管理活动的背景图按活动类型显示（地下城、团队副本、竞技场、自定义等），和暴雪自带面板一致，不再总是任务背景  
->5. 列表提示中按职责列出的队员，缺少专精名时不再报错，只显示职业
+>5. 列表提示中按职责列出的队员，缺少专精名时不再报错，只显示职业  
+>6. 申请者右键菜单的「屏蔽玩家」恢复：与暴雪自带菜单一样屏蔽该玩家并拒绝申请，不再报错  
+>7. 非国服装了 Raider.IO 时申请者提示不再报错；集合石自带的 Raider.IO 信息自 11.0.2 起就已关闭，仍不显示  
+>8. 启用了老版本 RaidBuilder 时，登录不再报错，改为禁用它并弹出提示  
+>9. 旧网易服务存档里留有未读公告时，打开主窗口不再报错
 
  - **2026-10-17**
 >**English**  

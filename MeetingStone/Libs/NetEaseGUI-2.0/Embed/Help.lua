@@ -51,7 +51,10 @@ function Help:HideHelpButtons()
     for _, button in pairs(self.helpButtons) do
         button:Hide()
     end
-    HelpPlate_Hide()
+    -- 12.x removed HelpPlate_Hide; MeetingStone never shows a help plate itself.
+    if HelpPlate_Hide then
+        HelpPlate_Hide()
+    end
 end
 
 function Help:ShowHelpButtons()
