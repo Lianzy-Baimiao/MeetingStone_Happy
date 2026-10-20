@@ -2,6 +2,7 @@
 BuildEnv(...)
 
 local IsAddOnLoaded = C_AddOns and C_AddOns.IsAddOnLoaded or IsAddOnLoaded
+local DisableAddOn = C_AddOns and C_AddOns.DisableAddOn or DisableAddOn
 
 
 debug = IsAddOnLoaded('!!!!!tdDevTools') and print or nop

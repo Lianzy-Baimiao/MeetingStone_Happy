@@ -407,7 +407,7 @@ function ApplicantPanel:ToggleEventMenu(button, applicant)
         {
             text = IGNORE_PLAYER,
             func = function()
-                AddIgnore(name)
+                C_FriendList.AddIgnore(name)
                 C_LFGList.DeclineApplicant(applicant:GetID())
             end,
             disabled = not name,

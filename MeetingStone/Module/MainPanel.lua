@@ -665,7 +665,8 @@ function MainPanel:OpenApplicantTooltip(applicant)
         end
     end
 
-    if RaiderIO and RaiderIO.GetProfile and Profile:GetEnableRaiderIO() then
+    -- Logic/RaiderIO.lua is commented out of Logic.xml, so RaiderIOService is nil.
+    if RaiderIOService and RaiderIO and RaiderIO.GetProfile and Profile:GetEnableRaiderIO() then
         RaiderIOService:appendRaiderIOData(applicant:GetName(), applicant:GetDungeonScore(), GameTooltip)
     end
 
